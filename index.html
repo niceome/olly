@@ -58,10 +58,10 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 .btn.sm{min-height:36px;padding:4px 12px;font-size:14px}
 .btn.add{border:2px solid var(--field);color:var(--field);font-weight:700;background:var(--card);min-width:6.5em}
 .btn.add:hover{background:color-mix(in srgb,var(--field) 12%,var(--card))}
-.btn.added{border:2px solid var(--field);background:var(--field);color:#fff;font-weight:700;min-width:6.5em}
-.btn.added:hover{background:var(--card);color:var(--acc2);border-color:var(--acc2)}
-.btn.added:hover .lbl{display:none}
-.btn.added:hover::after{content:'빼기'}
+.inwrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.inlbl{font-size:14px;font-weight:700;color:light-dark(#2b8a3e,#69db7c);white-space:nowrap}
+.sim[hidden]{display:none}
+.linkbtn{background:none;border:0;color:inherit;text-decoration:underline;font:inherit;cursor:pointer;padding:4px 0}
 .row.in{border-color:var(--field);box-shadow:inset 4px 0 0 var(--field)}
 .list{display:grid;gap:10px}
 .row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
@@ -107,7 +107,8 @@ footer ul{margin:6px 0 0;padding-left:18px}
 .dlg{background:var(--card);color:var(--ink);border-radius:20px;max-width:520px;width:100%;padding:24px;max-height:90vh;overflow:auto}
 .dlg h2{color:var(--field)}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10}
-.toast.on{opacity:1}
+.toast.on{opacity:1;pointer-events:auto}
+.toast button{background:none;border:0;color:var(--acc);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;margin-left:12px;padding:4px}
 @media(max-width:860px){.hero .wrap,.two{grid-template-columns:minmax(0,1fr)}.today{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) auto}.row .t{grid-column:1/-1;font-size:20px}.news .row{grid-template-columns:minmax(0,1fr)}.filters{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -138,7 +139,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
   <div class="wrap">
     <div class="today">
       <div><h2>오늘 수업</h2><p class="sub" id="todayDate"></p></div>
-      <div class="sim">
+      <div class="sim" id="simBox" hidden>
         <label for="simdt">시연용 시각</label>
         <input type="datetime-local" id="simdt">
         <button class="btn sm" id="nowBtn">지금</button>
@@ -202,11 +203,12 @@ footer ul{margin:6px 0 0;padding-left:18px}
       <li>스포츠센터 이벤트 정보 (2026-06-17 등록본, 2023년 이후 88건)</li>
     </ul>
     <p style="margin:8px 0 0">2026년도 공공데이터 활용 경진대회 출품용 프로토타입이에요. 캐릭터 올리는 이 서비스를 위해 새로 만든 캐릭터예요. 기록은 이 브라우저에만 저장돼요.</p>
+    <p style="margin:4px 0 0"><button class="linkbtn" id="demoMode">시연 모드 켜기</button> (수업 시각을 바꿔 가며 출석 체크를 시험해 볼 수 있어요)</p>
   </div>
 </footer>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div class="dlg" id="dlg"></div></div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 {
@@ -230,7 +232,10 @@ function simNow(){const v=$('simdt').value;return v?new Date(v):new Date()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.courses)return s}catch(e){}return null}
 function findCourse(k){return COURSES.find(c=>keyOf(c)===k)}
-function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2200)}
+function toast(m,undo){const t=$('toast');t.textContent=m;
+  if(undo){const b=document.createElement('button');b.type='button';b.textContent='되돌리기';b.onclick=()=>{t.classList.remove('on');undo()};t.append(b)}
+  t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),undo?6000:2200)}
+function swapState(next,msg){const prev=state;state=next;save();renderAll();toast(msg,()=>{state=prev;save();renderAll();toast('되돌렸어요')})}
 
 /* ---- growth rules ---- */
 function statXP(){const x=[0,0,0,0,0,0,0];for(const l of state.log)x[l.s]+=l.xp;return x}
@@ -334,7 +339,7 @@ function renderSearch(){
   const r=filtered(),mine=new Set(state.courses);
   $('resCount').textContent=`${r.length.toLocaleString('ko-KR')}개 강좌`;
   $('resList').innerHTML=r.slice(0,shown).map(c=>{const k=keyOf(c),has=mine.has(k);
-    return `<div class="row ${has?'in':''}"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div>${has?`<button class="btn sm added" data-del="${esc(k)}" aria-label="담은 강좌, 누르면 빼기"><span class="lbl">✓ 담은 강좌</span></button>`:`<button class="btn sm add" data-add="${esc(k)}">+ 담기</button>`}</div>`}).join('')||'<div class="empty">조건에 맞는 강좌가 없어요.</div>';
+    return `<div class="row ${has?'in':''}"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div>${has?`<div class="inwrap"><span class="inlbl">✓ 담은 강좌</span><button class="btn sm" data-del="${esc(k)}" style="color:var(--acc2)" aria-label="${esc(c[2]+' '+c[3])} 내 강좌에서 빼기">빼기</button></div>`:`<button class="btn sm add" data-add="${esc(k)}">+ 담기</button>`}</div>`}).join('')||'<div class="empty">조건에 맞는 강좌가 없어요.</div>';
   $('moreBtn').style.display=r.length>shown?'inline-block':'none'}
 function renderBadges(){
   const got=BADGES.map(b=>b[2](state));
@@ -392,15 +397,24 @@ function demoState(){
 document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
   if(t.dataset.check)doCheck(t.dataset.check);
   else if(t.dataset.add){if(!state.courses.includes(t.dataset.add)){state.courses.push(t.dataset.add);save();renderAll();toast('내 강좌에 담았어요')}}
-  else if(t.dataset.del){state.courses=state.courses.filter(k=>k!==t.dataset.del);save();renderAll();toast('내 강좌에서 뺐어요')}
+  else if(t.dataset.del){const k=t.dataset.del;swapState({...state,courses:state.courses.filter(x=>x!==k)},'내 강좌에서 뺐어요')}
   else if(t.id==='closeM')$('modal').classList.remove('on')});
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('on')});
 $('nowBtn').onclick=()=>setSim(new Date());
 $('nextBtn').onclick=()=>{const t=nextSlot();if(t)setSim(t);else toast('이번 주에 남은 수업이 없어요')};
 $('simdt').onchange=renderAll;
-$('resetBtn').onclick=()=>{state={name:'나',courses:[],log:[]};save();renderAll();toast('새로 시작했어요')};
-$('demoBtn').onclick=()=>{state=demoState();save();renderAll()};
+const hasData=()=>state.log.length||state.courses.length;
+$('resetBtn').onclick=()=>{if(hasData()&&!confirm(`출석 기록 ${state.log.length}회와 담은 강좌 ${state.courses.length}개가 모두 지워져요. 새로 시작할까요?`))return;
+  swapState({name:'나',courses:[],log:[]},'새로 시작했어요')};
+$('demoBtn').onclick=()=>{if(hasData()&&!confirm('지금 기록 대신 예시 기록으로 바뀌어요. 계속할까요?'))return;
+  swapState(demoState(),'예시 기록으로 바꿨어요')};
+let demo=false;
+function setDemo(on){demo=on;$('simBox').hidden=!on;$('demoMode').textContent=on?'시연 모드 끄기':'시연 모드 켜기';
+  if(on){if(!$('simdt').value)setSimInit()}else $('simdt').value='';
+  try{localStorage.setItem('oli-demo',on?'1':'')}catch(e){}}
+$('demoMode').onclick=()=>{setDemo(!demo);if(state)renderAll()};
+setInterval(()=>{if(!demo&&state)renderToday()},60000);
 $('fCenter').innerHTML='<option value="">전체 센터</option>'+CENTERS.map((c,i)=>`<option value="${i}">${c}</option>`).join('');
 $('fStat').innerHTML=['전체',...STATS.slice(0,6)].map((s,i)=>`<button class="btn" data-stat="${i-1}" aria-pressed="${i===0}" ${i?`style="--c:${SC[i-1]}"`:''}>${s}</button>`).join('');
 $('fStat').addEventListener('click',e=>{const b=e.target.closest('[data-stat]');if(!b)return;statFilter=+b.dataset.stat;
@@ -408,9 +422,10 @@ $('fStat').addEventListener('click',e=>{const b=e.target.closest('[data-stat]');
 ['fCenter','fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{shown=40;renderSearch()}));
 $('moreBtn').onclick=()=>{shown+=40;renderSearch()};
 
+{let on=new URLSearchParams(location.search).has('demo');try{on=on||localStorage.getItem('oli-demo')==='1'}catch(e){}setDemo(on)}
 Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').then(r=>r.json())]).then(([c,ev])=>{
   COURSES=c;EVENTS=ev;$('totalCount').textContent=c.length.toLocaleString('ko-KR');
-  setSimInit();state=load()||demoState();save();renderAll();
+  state=load()||demoState();save();renderAll();
 }).catch(()=>{$('todayList').innerHTML='<div class="empty">강좌 데이터를 불러오지 못했어요. 새로고침해 주세요.</div>'});
 function setSimInit(){const d=new Date();$('simdt').value=`${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
 }
