@@ -7,12 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* VOICE everyday habit tool, warm and encouraging, clear working parts
-   IDEA a pet you raise at the sports centre: every class you attend makes it grow and earn real sports gear
-   PICTURE the character itself, five visible life stages, one piece of gear per stat, a stage path under it
-   COLOUR leaf green field, white cards, coral accent for the check button, six stat hues
-   TYPE Jua display + Noto Sans KR text
-   LAYOUT laptop: tree left, level and stats right in a green band, then today's classes, then my classes and search side by side; phone: stacked */
 :root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1712);--ink:light-dark(#14231a,#e8f1ea);--mute:light-dark(#5d6f63,#9db2a3);--field:light-dark(#2f9e44,#1b5e2a);--fieldink:#ffffff;--card:light-dark(#ffffff,#16211a);--line:light-dark(#dfe8e1,#2a3a2f);--soft:light-dark(#f1f7f2,#1a271e);--acc:#ff5a3c;--acc2:light-dark(#d9480f,#ff8a6b)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
@@ -414,7 +408,7 @@ $('fStat').addEventListener('click',e=>{const b=e.target.closest('[data-stat]');
 ['fCenter','fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{shown=40;renderSearch()}));
 $('moreBtn').onclick=()=>{shown+=40;renderSearch()};
 
-Promise.all([fetch('courses.json').then(r=>r.json()),fetch('events.json').then(r=>r.json())]).then(([c,ev])=>{
+Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').then(r=>r.json())]).then(([c,ev])=>{
   COURSES=c;EVENTS=ev;$('totalCount').textContent=c.length.toLocaleString('ko-KR');
   setSimInit();state=load()||demoState();save();renderAll();
 }).catch(()=>{$('todayList').innerHTML='<div class="empty">강좌 데이터를 불러오지 못했어요. 새로고침해 주세요.</div>'});
