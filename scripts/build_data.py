@@ -41,13 +41,13 @@ ADULT_ONLY = False  # True 면 어린이·청소년 강좌를 아예 뺀다 (지
 # 원본 열 이름 후보. 센터·연도마다 열 이름이 달라서 앞에서부터 처음 맞는 열을 쓴다.
 # 원본 열 이름이 바뀌어 강좌가 줄면 여기에 새 이름을 추가한다.
 COLS = {
-    'sport': ['종목', '종목명', '강좌종목', '운동종목', '프로그램종목', '강좌구분', '프로그램구분', '분류', '강좌분류'],
+    'sport': ['종목', '강좌코드명', '종목명', '강좌종목', '운동종목', '프로그램종목', '강좌구분', '프로그램구분', '분류', '강좌분류'],
     'name': ['강좌명', '프로그램명', '강습명', '반명', '강좌반명', '과정명', '강좌'],
     'time': ['강좌시간', '수강시간', '시작종료시간', '강습시간', '수업시간', '운영시간', '시간', '이용시간', '강좌시간대'],
     'start_time': ['시작시간', '강좌시작시간', '수업시작시간', '운영시작시간'],
     'end_time': ['종료시간', '강좌종료시간', '수업종료시간', '운영종료시간'],
     'days': ['요일', '수강요일', '강좌요일', '운영요일', '수업요일', '강습요일', '이용요일'],
-    'target': ['대상', '수강대상', '강좌대상', '이용대상', '모집대상', '대상구분'],
+    'target': ['대상', '강습반', '수강대상', '강좌대상', '이용대상', '모집대상', '대상구분'],
     'price': ['수강료', '수강금액', '강좌금액', '강좌료', '이용료', '금액', '가격', '수강료(원)', '강습료', '월수강료'],
     'period': ['강좌기간', '시작종료일자', '운영기간', '수강기간', '기간', '교육기간'],
     'start': ['강좌시작일', '수강시작일', '시작일', '개강일', '운영시작일', '수강시작일', '시작일자'],
@@ -55,13 +55,13 @@ COLS = {
     'url': ['신청URL', '링크주소', '수강신청URL', '홈페이지', 'URL', '링크', '바로가기', '접수URL'],
 }
 EVENT_COLS = {
-    'center': ['센터명', '센터', '시설명', '사업장', '사업장명', '기관명', '시설'],
+    'center': ['스포츠센터', '센터명', '센터', '시설명', '사업장', '사업장명', '기관명', '시설'],
     'title': ['제목', '이벤트명', '게시글제목', '행사명', '이벤트제목', '게시물제목'],
     'posted': ['등록일', '게시일', '작성일', '등록일자', '게시일자', '작성일자'],
     'period': ['이벤트기간', '행사기간', '기간', '진행기간'],
     'start': ['이벤트시작일', '행사시작일', '시작일', '시작일자'],
     'end': ['이벤트종료일', '행사종료일', '종료일', '종료일자'],
-    'url': ['URL', '게시글URL', '링크', '주소', '상세URL', '게시글주소'],
+    'url': ['홈페이지링크', 'URL', '게시글URL', '링크', '주소', '상세URL', '게시글주소'],
 }
 
 # 사전에 없는 종목을 분류하는 키워드 (앞에서부터 처음 맞는 것)
@@ -78,7 +78,7 @@ STAT_KEYWORDS = [
 COURSE_WORDS = set('''
 초급 중급 상급 고급 기초 신기초 심화 연수 입문 성인 청소년 어린이 유아 초등 주부 여성 남성 전용 혼성
 주말 평일 오전 오후 저녁 새벽 야간 정규 단기 속성 정예 소수 특강 레슨 개인 그룹 실내 실외 교실 강습
-방특 강좌 강습 수업 클래스 훈련 특별 정기 공개 이벤트 리그 동호회 모임 회원 신규 기존 모던 국제식 체육관 소체육관 대체육관 이상 이하 미만 할인 제외 자유 자유형 배영 평영 접영 오리발 연습 대회 선수 마스터즈 키즈 주니어 쥬니어 시니어 실버 가족 커플
+강사 코치 선생님 선생 감독 프로 샘 쌤 방특 방특연계 여름캠프 겨울캠프 캠프 성장운동 마감 강좌 강습 수업 클래스 훈련 특별 정기 공개 이벤트 리그 동호회 모임 회원 신규 기존 모던 국제식 체육관 소체육관 대체육관 이상 이하 미만 할인 제외 자유 자유형 배영 평영 접영 오리발 연습 대회 선수 마스터즈 키즈 주니어 쥬니어 시니어 실버 가족 커플
 초급반 중급반 상급반 고급반 기초반 연수반 성인반 주말반 평일반 일반 기본 응용 완성 경기 체험 원데이
 '''.split())
 SURNAMES = set('김이박최정강조윤장임한오서신권황안송류유전홍고문양손배백허남심노하곽성차주우구민진나지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국어은편용봉')
@@ -163,7 +163,11 @@ def latest_raw(ds):
     return max(files, key=k)
 
 
-def get_rows(ds, key, offline):
+def get_rows(ds, key, offline, from_cache=False):
+    cached = os.path.join(CACHE, f"{ds.get('id')}.json")
+    if from_cache and os.path.exists(cached):
+        log(f'  저장된 원본 사용: {os.path.relpath(cached, ROOT)}')
+        return json.load(open(cached, encoding='utf-8')), 'cache'
     if key and not offline and ds.get('id'):
         try:
             rows = fetch_api(ds, key)
@@ -253,6 +257,7 @@ def norm_time(s, start='', end=''):
 
 
 def norm_days(s):
+    # '(토)' 같은 선택 요일도 포함한다 (기존 데이터와 같게, 이용자가 담은 강좌 키가 바뀌지 않도록)
     s = (s or '').replace('매일', '월화수목금토일').replace('평일', '월화수목금').replace('주말', '토일')
     s = re.sub(r'주\s*7\s*일', '월화수목금토일', s)
     s = re.sub(r'주\s*5\s*일', '월화수목금', s)
@@ -295,8 +300,15 @@ def strip_instructor(name):
     s = name
     # '홍길동 강사', '*홍길동강사', '(홍길동 코치)'
     s = re.sub(r'[(\[]?\s*\*?\s*[가-힣]{2,4}\s*(강사|코치|선생님|선생|프로|감독)(?![가-힣])\s*(님)?\s*[)\]]?', ' ', s)
+    # '홍길동샘반과합반' → '합반', '홍길동샘' → ''
+    s = re.sub(r'([가-힣]{2,4})(샘|쌤)반과\s*합반', lambda m: '합반' if looks_like_name(m[1]) else m[0], s)
+    s = re.sub(r'([가-힣]{2,4})(샘|쌤)(?![가-힣])', lambda m: '' if looks_like_name(m[1]) else m[0], s)
+    # '홍길동 마감' 처럼 이름 뒤에 상태 낱말이 붙은 경우
+    m = re.search(r'([가-힣]{2,4})\s*(마감|휴강|종료)\s*$', s)
+    if m and looks_like_name(m[1]):
+        s = s[:m.start(1)] + ' ' + m[2]
     # 맨 끝 ')홍길동' 또는 ' 홍길동'
-    m = re.search(r'(?:(?<=[)\]])|\s|\*)\s*([가-힣]{2,4})\s*$', s)
+    m = re.search(r'(?:(?<=[)\]])|\s|\*)\s*([가-힣]{2,4})\s*\d{0,3}\s*$', s)
     if m and looks_like_name(m[1]):
         s = s[:m.start(1)]
     # 맨 앞 '홍길동 실외테니스'
@@ -304,8 +316,31 @@ def strip_instructor(name):
     if m and looks_like_name(m[1]):
         s = s[m.end():]
     s = re.sub(r'\s{2,}', ' ', s).strip(' -_/*')
+    s = re.sub(r'\(\s*\)', '', s).strip()
     if s != name.strip():
         REMOVED.setdefault(name.strip(), s)
+    return s
+
+
+def found_names():
+    """지금까지 강좌명에서 지운 사람 이름들."""
+    out = set()
+    for a, z in REMOVED.items():
+        for t in re.findall(r'[가-힣]{2,4}', a):
+            if t not in z and looks_like_name(t):
+                out.add(t)
+    return out
+
+
+def strip_known_names(name, names):
+    """다른 강좌명에서 이름으로 확인된 낱말을 이 강좌명에서도 지운다."""
+    s = name
+    for n in sorted(names, key=len, reverse=True):
+        if n in s:
+            s = re.sub(rf'\*?{n}\s*(강사|코치|선생님|샘|쌤)?\s*\d{{0,3}}', ' ', s)
+    s = re.sub(r'\s{2,}', ' ', s).strip(' -_/*')
+    if s != name:
+        REMOVED.setdefault(name, s)
     return s
 
 
@@ -334,7 +369,7 @@ def build_center(center, rows, ref, table, unknown):
     if missing:
         log(f'  ! 필수 열 없음 {missing}. 원본 열: {list(rows[0].keys())}')
 
-    out, skipped = [], {'시간 없음': 0, '요일 없음': 0, '대여 제외': 0}
+    out, skipped = [], {'시간 없음': 0, '요일 없음': 0, '대여 제외': 0, '폐강': 0}
     periods = []
     for r in rows:
         sport = pick(r, COLS['sport'])
@@ -342,6 +377,9 @@ def build_center(center, rows, ref, table, unknown):
         if not raw_name:
             continue
         name = strip_instructor(raw_name) or sport or raw_name
+        if '폐강' in raw_name:
+            skipped['폐강'] += 1
+            continue
         if RENTAL.search(sport + ' ' + raw_name):
             skipped['대여 제외'] += 1
             continue
@@ -366,6 +404,10 @@ def build_center(center, rows, ref, table, unknown):
                norm_price(pick(r, COLS['price'])), url]
         periods.append((a, b))
         out.append((row, a, b))
+
+    names = found_names()
+    for row, _, _ in out:
+        row[3] = strip_known_names(row[3], names) or row[2] or row[3]
 
     if any(v for v in skipped.values()):
         log(f'  건너뜀: {skipped}')
@@ -478,6 +520,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--ref', help='운영 중 판단 기준일 YYYY-MM-DD (기본: 오늘, 한국 시간)')
     ap.add_argument('--offline', action='store_true', help='오픈API를 쓰지 않고 data/raw CSV만 사용')
+    ap.add_argument('--from-cache', action='store_true', help='data/cache 에 저장된 오픈API 원본으로 변환 (개발용)')
     ap.add_argument('--dry-run', action='store_true', help='결과만 보여 주고 저장하지 않음')
     args = ap.parse_args()
 
@@ -502,7 +545,7 @@ def main():
     for ds in conf['courses']:
         c = ds['center']
         log(f'[{conf["centers"][c]}] {ds["title"]}')
-        rows, src = get_rows(ds, key, args.offline)
+        rows, src = get_rows(ds, key, args.offline, args.from_cache)
         built = build_center(c, rows, ref, table, unknown) if rows else []
         prev = [x for x in old_courses if x[0] == c]
         if not built:
@@ -531,7 +574,7 @@ def main():
     # 이벤트
     ev_conf = conf['events']
     log(f'[이벤트] {ev_conf["title"]}')
-    rows, src = get_rows(ev_conf, key, args.offline)
+    rows, src = get_rows(ev_conf, key, args.offline, args.from_cache)
     events = build_events(rows, ev_conf) if rows else []
     if not events:
         log(f'  ! 새 데이터 없음 → 기존 이벤트 {len(old_events)}건 유지')
