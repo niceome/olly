@@ -23,8 +23,11 @@ h2{font-size:28px}h3{font-size:20px}
 .band{padding:clamp(24px,4vw,52px) max(5vw,16px)}
 .wrap{max-width:1180px;margin:0 auto}
 .hero{background:var(--field);color:var(--fieldink)}
-.hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:center}
-.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-areas:"brand panel" "stage panel" "path panel";gap:16px 28px;align-items:center}
+.brand{grid-area:brand;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.panel{grid-area:panel}
+.stage{grid-area:stage}
+.path{grid-area:path}
 .brand h1{font-size:clamp(34px,5vw,48px)}
 .brand span{opacity:.9}
 .stage{position:relative;aspect-ratio:1.15/1;max-height:400px;width:100%}
@@ -114,7 +117,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
 .dlg h2{color:var(--field)}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10}
 .toast.on{opacity:1}
-@media(max-width:860px){.hero .wrap,.two{grid-template-columns:minmax(0,1fr)}.today{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:860px){.hero .wrap,.two{grid-template-columns:minmax(0,1fr)}.hero .wrap{grid-template-areas:"brand" "panel" "stage" "path";gap:14px}.hero{padding-top:clamp(18px,4vw,28px)}.stage{aspect-ratio:1.6/1;max-height:none;max-width:420px;width:100%;margin-inline:auto}.today{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) auto}.row .t{grid-column:1/-1;font-size:20px}.news .row{grid-template-columns:minmax(0,1fr)}.filters{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .apply{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--acc2);text-decoration:none;border:1.5px solid currentColor;border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap;vertical-align:1px}.apply:hover{background:var(--acc2);color:#fff}.apply:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
@@ -123,11 +126,9 @@ footer ul{margin:6px 0 0;padding-left:18px}
 <body>
 <header class="band hero">
   <div class="wrap">
-    <div>
-      <div class="brand"><h1>올리</h1><span>오늘 한 번의 출석이 내일의 체력이 됩니다</span></div>
-      <div class="stage" id="stage" role="img" aria-label="내 캐릭터 올리"></div>
-      <ol class="path" id="path" aria-label="성장 단계"></ol>
-    </div>
+    <div class="brand"><h1>올리</h1><span>오늘 한 번의 출석이 내일의 체력이 됩니다</span></div>
+    <div class="stage" id="stage" role="img" aria-label="내 캐릭터 올리"></div>
+    <ol class="path" id="path" aria-label="성장 단계"></ol>
     <div class="panel">
       <div class="lv"><b id="lvNum">Lv.1</b><span id="lvStage">새싹</span></div>
       <div class="xpbar"><i id="xpFill" style="width:0"></i></div>
@@ -301,7 +302,7 @@ function drawTree(){
     if(si===4)g+=`<circle cx="-30" cy="-50" r="13" fill="#fcc419" stroke="#f08c00" stroke-width="3"/><path d="M-36 -64 L-30 -54 L-24 -64" stroke="#1c7ed6" stroke-width="5" fill="none"/><path d="M-30 -178 l12 -24 18 16 18 -16 12 24z" fill="#fcc419" stroke="#f08c00" stroke-width="3"/>`;
     body=`<g transform="translate(200 330) scale(${sc})">${g}</g>`;
   }
-  $('stage').innerHTML=`<svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${ground}${body}</svg>`}
+  $('stage').innerHTML=`<svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${ground}${body}</svg>`}
 
 
 /* ---- render ---- */
