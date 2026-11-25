@@ -165,7 +165,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
     </div>
     <div>
       <h2>강좌 찾기</h2>
-      <p class="sub">4개 센터 실제 강좌 <b id="totalCount">0</b>개 (2026년 공공데이터)</p>
+      <p class="sub">4개 센터 실제 강좌 <b id="totalCount">0</b>개 (공공데이터, 매주 갱신)</p>
       <div class="filters">
         <select id="fCenter" aria-label="센터"></select>
         <input id="fQ" type="search" placeholder="종목이나 강좌명 (예: 배드민턴)" aria-label="검색어">
@@ -204,8 +204,8 @@ footer ul{margin:6px 0 0;padding-left:18px}
   <div class="wrap">
     <b>데이터 출처</b> 공공데이터포털, 한국체육산업개발(주)
     <ul>
-      <li>올림픽수영장·올림픽스포츠센터·일산스포츠센터·분당스포츠센터 강좌정보 (2026년 5~7월 등록본, 2026년 6월 운영 강좌)</li>
-      <li>스포츠센터 이벤트 정보 (2026-06-17 등록본, 2023년 이후 88건)</li>
+      <li>올림픽수영장·올림픽공원스포츠센터·일산스포츠센터·분당스포츠센터 강좌정보 (매주 자동 갱신, 갱신 시점에 운영 중인 강좌 <span id="fCourses">-</span>개)</li>
+      <li>스포츠센터 이벤트 정보 (2023년 이후 <span id="fEvents">-</span>건<span id="fEventLatest"></span>)</li>
     </ul>
     <p style="margin:8px 0 0">2026년도 공공데이터 활용 경진대회 출품용 프로토타입이에요. 캐릭터 올리는 이 서비스를 위해 새로 만든 캐릭터예요. 기록은 이 브라우저에만 저장돼요.</p>
   </div>
@@ -416,6 +416,8 @@ $('moreBtn').onclick=()=>{shown+=40;renderSearch()};
 
 Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').then(r=>r.json())]).then(([c,ev])=>{
   COURSES=c;EVENTS=ev;$('totalCount').textContent=c.length.toLocaleString('ko-KR');
+  $('fCourses').textContent=c.length.toLocaleString('ko-KR');$('fEvents').textContent=ev.length.toLocaleString('ko-KR');
+  const latest=ev.reduce((m,e)=>e[4]>m?e[4]:m,'');if(latest)$('fEventLatest').textContent=`, 최근 글 ${latest}`;
   setSimInit();state=load()||demoState();save();renderAll();
 }).catch(()=>{$('todayList').innerHTML='<div class="empty">강좌 데이터를 불러오지 못했어요. 새로고침해 주세요.</div>'});
 function setSimInit(){const d=new Date();$('simdt').value=`${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
