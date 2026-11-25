@@ -155,10 +155,10 @@ footer ul{margin:6px 0 0;padding-left:18px}
  .topnav .nlink{font:500 15px "Noto Sans KR",sans-serif;background:none;border:0;color:var(--ink);cursor:pointer;border-radius:10px;padding:8px 14px;min-height:40px}
  .topnav .nlink:hover{background:var(--soft)}
  .topnav .nlink.on{color:var(--field);background:var(--soft);font-weight:700}
- body[data-view=home] #page-search,body[data-view=home] #page-badges,body[data-view=home] #page-rewards{display:none}
+ body[data-view=home] #sec-courses,body[data-view=home] #page-search,body[data-view=home] #page-badges,body[data-view=home] #page-rewards{display:none}
  body[data-view=search] .hero,body[data-view=search] #sec-today,body[data-view=search] #sec-courses,body[data-view=search] #sec-news,body[data-view=search] #sec-grow,body[data-view=search] #page-badges,body[data-view=search] #page-rewards{display:none}
- body[data-view=badges] .hero,body[data-view=badges] #sec-today,body[data-view=badges] #sec-courses,body[data-view=badges] #sec-news,body[data-view=badges] #sec-grow,body[data-view=badges] #page-search,body[data-view=badges] #page-rewards{display:none}
- body[data-view=rewards] .hero,body[data-view=rewards] #sec-today,body[data-view=rewards] #sec-courses,body[data-view=rewards] #sec-news,body[data-view=rewards] #sec-grow,body[data-view=rewards] #page-search,body[data-view=rewards] #page-badges{display:none}
+ body[data-view=mypage] .hero,body[data-view=mypage] #sec-today,body[data-view=mypage] #sec-news,body[data-view=mypage] #sec-grow,body[data-view=mypage] #page-search{display:none}
+ body[data-view=mypage] #page-rewards{background:var(--soft)}
  .recblock-rewards,.newsblock-rewards{display:none}
  .path{grid-template-columns:repeat(5,minmax(0,100px));justify-content:center}
 }
@@ -170,8 +170,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
   <div class="navlinks">
     <button class="nlink" data-view="home">홈</button>
     <button class="nlink" data-view="search">강좌 찾기</button>
-    <button class="nlink" data-view="badges">배지</button>
-    <button class="nlink" data-view="rewards">혜택</button>
+    <button class="nlink" data-view="mypage">마이페이지</button>
   </div>
 </nav>
 <header class="band hero">
@@ -525,7 +524,7 @@ function goView(v){
   document.body.dataset.view=v;
   document.querySelectorAll('.topnav .nlink').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
   if(window.matchMedia('(min-width:861px)').matches)window.scrollTo({top:0});
-  else{const anchor={home:'sec-today',search:'page-search',badges:'sec-badges',rewards:'sec-rewards'}[v],el=anchor&&$(anchor);if(el)el.scrollIntoView({block:'start'})}}
+  else{const anchor={home:'sec-today',search:'page-search',mypage:'sec-courses'}[v],el=anchor&&$(anchor);if(el)el.scrollIntoView({block:'start'})}}
 {const nav=[...document.querySelectorAll('.topnav [data-view]')];
  nav.forEach(b=>b.addEventListener('click',()=>goView(b.dataset.view)));
  document.querySelectorAll('.topnav .nlink').forEach(b=>b.classList.toggle('on',b.dataset.view==='home'));}
