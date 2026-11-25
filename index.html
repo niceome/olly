@@ -409,7 +409,9 @@ const STATS=['지구력','근력','유연성','민첩성','리듬감','집중력
 const SC=['#1c7ed6','#e8590c','#ae3ec9','#f59f00','#e64980','#0ca678','#868e96'];
 const DAYS='일월화수목금토';
 const KEY='teunteun-v1';
-let COURSES=[],EVENTS=[],state=null,page=1,statFilter=-1,centerFilter=-1,dayFilter=0,timeFilter=0;const PER=10;
+let COURSES=[],EVENTS=[],state=null,page=1;const PER=10;
+// 필터: 고른 칩 번호(0번 '전체'는 제외). 비어 있으면 전체
+const FS={fCenter:new Set(),fStat:new Set(),fDay:new Set(),fTime:new Set()};
 const DAY_OPTS=[['전체',null],['평일',[1,2,3,4,5]],['주말',[0,6]],...[1,2,3,4,5,6,0].map(d=>[DAYS[d],[d]])];
 const TIME_OPTS=[['전체',0,1440],['새벽 ~9시',0,540],['오전 9~12시',540,720],['오후 12~18시',720,1080],['저녁 18시~',1080,1440]];
 const CENTER_SHORT=['올림픽수영장','올림픽공원','일산','분당'];
@@ -560,8 +562,8 @@ function renderMine(){
   $('myCount').textContent=`담은 강좌 ${list.length}개`;
   $('myList').innerHTML=list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm" data-delc="${esc(keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join('')}
 function filtered(){
-  const q=$('fQ').value.trim(),adult=$('fAdult').checked,days=DAY_OPTS[dayFilter][1],[,t0,t1]=TIME_OPTS[timeFilter];
-  return COURSES.filter(c=>(centerFilter<0||c[0]===centerFilter)&&(!days||days.some(d=>daySet(c[5]).has(d)))&&(!timeFilter||(([s,e])=>e-s>=360||(s>=t0&&s<t1))(parseTime(c[4])))&&(statFilter<0||c[1]===statFilter)&&(!q||c[2].includes(q)||c[3].includes(q))&&(!adult||!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]+c[2])))}
+  const q=$('fQ').value.trim(),adult=$('fAdult').checked,days=[...FS.fDay].flatMap(i=>DAY_OPTS[i][1]),times=[...FS.fTime].map(i=>TIME_OPTS[i]);
+  return COURSES.filter(c=>(!FS.fCenter.size||FS.fCenter.has(c[0]+1))&&(!days.length||days.some(d=>daySet(c[5]).has(d)))&&(!times.length||(([s,e])=>e-s>=360||times.some(([,a,b])=>s>=a&&s<b))(parseTime(c[4])))&&(!FS.fStat.size||FS.fStat.has(c[1]+1))&&(!q||c[2].includes(q)||c[3].includes(q))&&(!adult||!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]+c[2])))}
 function renderSearch(){
   const r=filtered(),mine=new Set(state.courses);
   const pages=Math.max(1,Math.ceil(r.length/PER));
@@ -654,16 +656,19 @@ $('nextBtn').onclick=()=>{const t=nextSlot();if(t)setSim(t);else toast('이번 �
 $('simdt').onchange=renderAll;
 $('resetBtn').onclick=()=>{state={name:'나',courses:[],log:[]};save();renderAll();toast('새로 시작했어요')};
 $('demoBtn').onclick=()=>{state=demoState();save();renderAll()};
-function chipGroup(id,labels,styles,onPick){const el=$(id);
+function syncChips(id){[...$(id).children].forEach((b,i)=>b.setAttribute('aria-pressed',i?FS[id].has(i):!FS[id].size))}
+function chipGroup(id,labels,styles){const el=$(id),sel=FS[id];
   el.innerHTML=labels.map((s,i)=>`<button class="btn" data-i="${i}" aria-pressed="${i===0}"${styles&&styles[i]?` style="${styles[i]}"`:''}>${esc(s)}</button>`).join('');
-  el.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;for(const x of el.children)x.setAttribute('aria-pressed',x===b);onPick(+b.dataset.i);page=1;renderSearch()})}
-chipGroup('fCenter',['전체 센터',...CENTER_SHORT],null,i=>centerFilter=i-1);
-chipGroup('fStat',['전체',...STATS.slice(0,6)],['',...SC.slice(0,6).map(c=>`--c:${c}`)],i=>statFilter=i-1);
-chipGroup('fDay',DAY_OPTS.map(o=>o[0]),null,i=>dayFilter=i);
-chipGroup('fTime',TIME_OPTS.map(o=>o[0]),null,i=>timeFilter=i);
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;const i=+b.dataset.i;
+    if(i===0)sel.clear();else if(sel.has(i))sel.delete(i);else sel.add(i);
+    if(sel.size===labels.length-1)sel.clear();
+    syncChips(id);page=1;renderSearch()})}
+chipGroup('fCenter',['전체 센터',...CENTER_SHORT]);
+chipGroup('fStat',['전체',...STATS.slice(0,6)],['',...SC.slice(0,6).map(c=>`--c:${c}`)]);
+chipGroup('fDay',DAY_OPTS.map(o=>o[0]));
+chipGroup('fTime',TIME_OPTS.map(o=>o[0]));
 ['fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{page=1;renderSearch()}));
-$('fReset').onclick=()=>{centerFilter=statFilter=-1;dayFilter=timeFilter=0;$('fQ').value='';$('fAdult').checked=true;
-  for(const id of ['fCenter','fStat','fDay','fTime'])[...$(id).children].forEach((b,i)=>b.setAttribute('aria-pressed',i===0));page=1;renderSearch()};
+$('fReset').onclick=()=>{for(const id in FS){FS[id].clear();syncChips(id)}$('fQ').value='';$('fAdult').checked=true;page=1;renderSearch()};
 
 /* ---- views: top nav on laptop, bottom tab bar on phone ---- */
 function goView(v){
