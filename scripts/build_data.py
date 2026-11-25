@@ -21,12 +21,14 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS = os.path.join(ROOT, 'scripts')
 RAW = os.path.join(ROOT, 'data', 'raw')
+CACHE = os.path.join(ROOT, 'data', 'cache')  # 오픈API 원본 (git 제외, Actions 아티팩트로 보관)
 COURSES_OUT = os.path.join(ROOT, 'courses.json')
 EVENTS_OUT = os.path.join(ROOT, 'events.json')
 
@@ -41,16 +43,16 @@ ADULT_ONLY = False  # True 면 어린이·청소년 강좌를 아예 뺀다 (지
 COLS = {
     'sport': ['종목', '종목명', '강좌종목', '운동종목', '프로그램종목', '강좌구분', '프로그램구분', '분류', '강좌분류'],
     'name': ['강좌명', '프로그램명', '강습명', '반명', '강좌반명', '과정명', '강좌'],
-    'time': ['강좌시간', '강습시간', '수업시간', '운영시간', '시간', '이용시간', '강좌시간대'],
+    'time': ['강좌시간', '수강시간', '시작종료시간', '강습시간', '수업시간', '운영시간', '시간', '이용시간', '강좌시간대'],
     'start_time': ['시작시간', '강좌시작시간', '수업시작시간', '운영시작시간'],
     'end_time': ['종료시간', '강좌종료시간', '수업종료시간', '운영종료시간'],
-    'days': ['요일', '강좌요일', '운영요일', '수업요일', '강습요일', '이용요일'],
+    'days': ['요일', '수강요일', '강좌요일', '운영요일', '수업요일', '강습요일', '이용요일'],
     'target': ['대상', '수강대상', '강좌대상', '이용대상', '모집대상', '대상구분'],
-    'price': ['수강료', '강좌료', '이용료', '금액', '가격', '수강료(원)', '강습료', '월수강료'],
-    'period': ['강좌기간', '운영기간', '수강기간', '기간', '교육기간'],
-    'start': ['강좌시작일', '시작일', '개강일', '운영시작일', '수강시작일', '시작일자'],
-    'end': ['강좌종료일', '종료일', '종강일', '운영종료일', '수강종료일', '종료일자'],
-    'url': ['신청URL', '수강신청URL', '홈페이지', 'URL', '링크', '바로가기', '접수URL'],
+    'price': ['수강료', '수강금액', '강좌금액', '강좌료', '이용료', '금액', '가격', '수강료(원)', '강습료', '월수강료'],
+    'period': ['강좌기간', '시작종료일자', '운영기간', '수강기간', '기간', '교육기간'],
+    'start': ['강좌시작일', '수강시작일', '시작일', '개강일', '운영시작일', '수강시작일', '시작일자'],
+    'end': ['강좌종료일', '수강종료일', '종료일', '종강일', '운영종료일', '수강종료일', '종료일자'],
+    'url': ['신청URL', '링크주소', '수강신청URL', '홈페이지', 'URL', '링크', '바로가기', '접수URL'],
 }
 EVENT_COLS = {
     'center': ['센터명', '센터', '시설명', '사업장', '사업장명', '기관명', '시설'],
@@ -76,7 +78,7 @@ STAT_KEYWORDS = [
 COURSE_WORDS = set('''
 초급 중급 상급 고급 기초 신기초 심화 연수 입문 성인 청소년 어린이 유아 초등 주부 여성 남성 전용 혼성
 주말 평일 오전 오후 저녁 새벽 야간 정규 단기 속성 정예 소수 특강 레슨 개인 그룹 실내 실외 교실 강습
-강좌 강습 수업 클래스 훈련 특별 정기 공개 이벤트 리그 동호회 모임 회원 신규 기존 모던 국제식 체육관 소체육관 대체육관 이상 이하 미만 할인 제외 자유 자유형 배영 평영 접영 오리발 연습 대회 선수 마스터즈 키즈 주니어 쥬니어 시니어 실버 가족 커플
+방특 강좌 강습 수업 클래스 훈련 특별 정기 공개 이벤트 리그 동호회 모임 회원 신규 기존 모던 국제식 체육관 소체육관 대체육관 이상 이하 미만 할인 제외 자유 자유형 배영 평영 접영 오리발 연습 대회 선수 마스터즈 키즈 주니어 쥬니어 시니어 실버 가족 커플
 초급반 중급반 상급반 고급반 기초반 연수반 성인반 주말반 평일반 일반 기본 응용 완성 경기 체험 원데이
 '''.split())
 SURNAMES = set('김이박최정강조윤장임한오서신권황안송류유전홍고문양손배백허남심노하곽성차주우구민진나지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국어은편용봉')
@@ -90,8 +92,13 @@ def log(*a):
 
 def http_json(url, timeout=30):
     req = urllib.request.Request(url, headers={'User-Agent': 'olly-data-updater'})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode('utf-8'))
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode('utf-8'))
+    except urllib.error.HTTPError as e:
+        # 서버가 알려 주는 거절 사유 (예: 등록되지 않은 인증키). 인증키 자체는 담기지 않는다.
+        body = e.read().decode('utf-8', 'replace')[:300].strip()
+        raise RuntimeError(f'HTTP {e.code} {e.reason} {body}') from None
 
 
 def latest_api_path(ds):
@@ -159,7 +166,11 @@ def latest_raw(ds):
 def get_rows(ds, key, offline):
     if key and not offline and ds.get('id'):
         try:
-            return fetch_api(ds, key), 'api'
+            rows = fetch_api(ds, key)
+            os.makedirs(CACHE, exist_ok=True)
+            with open(os.path.join(CACHE, f"{ds['id']}.json"), 'w', encoding='utf-8') as f:
+                json.dump(rows, f, ensure_ascii=False)
+            return rows, 'api'
         except Exception as e:  # noqa: BLE001
             log(f'  ! 오픈API 실패: {e}')
     f = latest_raw(ds)
@@ -316,6 +327,7 @@ RENTAL = re.compile(r'(코트|구장).*(대여|대관)|정기\s*대[여관]|대�
 def build_center(center, rows, ref, table, unknown):
     cols = find_cols(rows, COLS)
     log(f'  인식한 열: {cols}')
+    log(f'  원본 열: {list(rows[0].keys())}')
     missing = [f for f in ('name', 'days') if f not in cols]
     if 'time' not in cols and not ('start_time' in cols and 'end_time' in cols):
         missing.append('time')
@@ -411,6 +423,7 @@ def event_center(text, url, board):
 def build_events(rows, conf):
     cols = find_cols(rows, EVENT_COLS)
     log(f'  인식한 열: {cols}')
+    log(f'  원본 열: {list(rows[0].keys())}')
     out, seen = [], set()
     for r in rows:
         title = re.sub(r'\s+', ' ', pick(r, EVENT_COLS['title'])).strip()
@@ -471,6 +484,9 @@ def main():
     kst = dt.timezone(dt.timedelta(hours=9))
     ref = args.ref or dt.datetime.now(kst).date().isoformat()
     key = os.environ.get('DATA_GO_KR_KEY', '').strip()
+    if '%' in key:  # Encoding 키를 넣었으면 Decoding 키로 바꾼다 (안 그러면 두 번 인코딩돼 401)
+        key = urllib.parse.unquote(key)
+        log('인증키가 Encoding 형식이라 Decoding 형식으로 바꿔 사용')
     conf = json.load(open(os.path.join(SCRIPTS, 'datasets.json'), encoding='utf-8'))
     table = json.load(open(os.path.join(SCRIPTS, 'sport_stat.json'), encoding='utf-8'))
     SPORT_WORDS.update(k for k in table if k)

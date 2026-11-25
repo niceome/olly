@@ -40,6 +40,15 @@ jobs:
             python3 scripts/build_data.py
           fi
 
+      - name: 받은 원본 보관 (확인용, 14일)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-api-data
+          path: data/cache/
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: JSON 검증
         run: |
           python3 - <<'EOF'
