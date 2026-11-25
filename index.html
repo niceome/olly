@@ -81,7 +81,6 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 .tag{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px;color:#fff;white-space:nowrap}
 .state{font-size:13px;color:var(--mute);text-align:right}
 .empty{background:var(--soft);border-radius:14px;padding:18px;color:var(--mute)}
-.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:28px;align-items:start}
 .filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:12px 0}
 .filters .full{grid-column:1/-1}
 .statpick{display:flex;gap:6px;flex-wrap:wrap}
@@ -132,7 +131,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
 .toast .gt-bar{height:8px;border-radius:5px;background:color-mix(in srgb,currentColor 22%,transparent);overflow:hidden;margin:6px 0 3px}
 .toast .gt-bar i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s ease}
 .toast .gt-sub{font-size:12px;opacity:.8}
-@media(max-width:860px){.hero .wrap,.two{grid-template-columns:minmax(0,1fr)}.hero .wrap{grid-template-areas:"brand" "panel" "stage" "path";gap:14px}.hero{padding-top:clamp(18px,4vw,28px)}.stage{aspect-ratio:1.6/1;max-height:none;max-width:420px;width:100%;margin-inline:auto}.today{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.hero .wrap{grid-template-areas:"brand" "panel" "stage" "path";gap:14px}.hero{padding-top:clamp(18px,4vw,28px)}.stage{aspect-ratio:1.6/1;max-height:none;max-width:420px;width:100%;margin-inline:auto}.today{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) auto}.row .t{grid-column:1/-1;font-size:20px}.news .row{grid-template-columns:minmax(0,1fr)}.filters{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .apply{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--acc2);text-decoration:none;border:1.5px solid currentColor;border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap;vertical-align:1px}.apply:hover{background:var(--acc2);color:#fff}.apply:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
@@ -156,9 +155,10 @@ footer ul{margin:6px 0 0;padding-left:18px}
  .topnav .nlink{font:500 15px "Noto Sans KR",sans-serif;background:none;border:0;color:var(--ink);cursor:pointer;border-radius:10px;padding:8px 14px;min-height:40px}
  .topnav .nlink:hover{background:var(--soft)}
  .topnav .nlink.on{color:var(--field);background:var(--soft);font-weight:700}
- body[data-view=home] #page-badges,body[data-view=home] #page-rewards{display:none}
- body[data-view=badges] .hero,body[data-view=badges] #sec-today,body[data-view=badges] #sec-courses,body[data-view=badges] #page-rewards{display:none}
- body[data-view=rewards] .hero,body[data-view=rewards] #sec-today,body[data-view=rewards] #sec-courses,body[data-view=rewards] #page-badges{display:none}
+ body[data-view=home] #page-search,body[data-view=home] #page-badges,body[data-view=home] #page-rewards{display:none}
+ body[data-view=search] .hero,body[data-view=search] #sec-today,body[data-view=search] #sec-courses,body[data-view=search] #page-badges,body[data-view=search] #page-rewards{display:none}
+ body[data-view=badges] .hero,body[data-view=badges] #sec-today,body[data-view=badges] #sec-courses,body[data-view=badges] #page-search,body[data-view=badges] #page-rewards{display:none}
+ body[data-view=rewards] .hero,body[data-view=rewards] #sec-today,body[data-view=rewards] #sec-courses,body[data-view=rewards] #page-search,body[data-view=rewards] #page-badges{display:none}
  .path{grid-template-columns:repeat(5,minmax(0,100px));justify-content:center}
 }
 </style>
@@ -168,6 +168,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
   <button class="brand2" data-view="home">올리</button>
   <div class="navlinks">
     <button class="nlink" data-view="home">홈</button>
+    <button class="nlink" data-view="search">강좌 찾기</button>
     <button class="nlink" data-view="badges">배지</button>
     <button class="nlink" data-view="rewards">혜택</button>
   </div>
@@ -206,25 +207,26 @@ footer ul{margin:6px 0 0;padding-left:18px}
 </section>
 
 <section class="band soft" id="sec-courses">
-  <div class="wrap two">
-    <div>
-      <h2>내 강좌</h2>
-      <p class="sub">등록한 강좌를 담아 두면 수업 시간에 체크할 수 있어요.</p>
-      <div class="list" id="myList" style="margin-top:14px"></div>
+  <div class="wrap">
+    <h2>내 강좌</h2>
+    <p class="sub">등록한 강좌를 담아 두면 수업 시간에 체크할 수 있어요.</p>
+    <div class="list" id="myList" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<section class="band" id="page-search">
+  <div class="wrap">
+    <h2>강좌 찾기</h2>
+    <p class="sub">4개 센터 실제 강좌 <b id="totalCount">0</b>개 (공공데이터, 매주 갱신)</p>
+    <div class="filters">
+      <select id="fCenter" aria-label="센터"></select>
+      <input id="fQ" type="search" placeholder="종목이나 강좌명 (예: 배드민턴)" aria-label="검색어">
+      <div class="statpick full" id="fStat"></div>
+      <label class="full" style="font-size:14px"><input type="checkbox" id="fAdult" checked style="min-height:auto"> 성인 강좌만</label>
     </div>
-    <div>
-      <h2>강좌 찾기</h2>
-      <p class="sub">4개 센터 실제 강좌 <b id="totalCount">0</b>개 (공공데이터, 매주 갱신)</p>
-      <div class="filters">
-        <select id="fCenter" aria-label="센터"></select>
-        <input id="fQ" type="search" placeholder="종목이나 강좌명 (예: 배드민턴)" aria-label="검색어">
-        <div class="statpick full" id="fStat"></div>
-        <label class="full" style="font-size:14px"><input type="checkbox" id="fAdult" checked style="min-height:auto"> 성인 강좌만</label>
-      </div>
-      <div class="count" id="resCount"></div>
-      <div class="list res" id="resList"></div>
-      <nav class="pager" id="pager" style="margin-top:12px" aria-label="강좌 페이지"></nav>
-    </div>
+    <div class="count" id="resCount"></div>
+    <div class="list res" id="resList"></div>
+    <nav class="pager" id="pager" style="margin-top:12px" aria-label="강좌 페이지"></nav>
   </div>
 </section>
 
@@ -400,7 +402,7 @@ function renderToday(){
     return `<div class="row"><div class="t">${esc(c[4].split('-')[0])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(CENTERS[c[0]])} · ${esc(c[4])} · ${esc(STATS[c[1]])} +10</div></div><div style="display:grid;justify-items:end;gap:6px"><button class="btn go" data-check="${esc(k)}" ${open?'':'disabled'}>${done?'완료':'출석 체크'}</button><div class="state">${esc(st)}</div></div></div>`}).join('')}
 function renderMine(){
   const list=state.courses.map(findCourse).filter(Boolean);
-  $('myList').innerHTML=list.length?list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm" data-delc="${esc(keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join(''):'<div class="empty">담은 강좌가 없어요.</div>'}
+  $('myList').innerHTML=list.length?list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm" data-delc="${esc(keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join(''):'<div class="empty">아직 담은 강좌가 없어요. <button class="btn sm" data-goview="search" style="margin-left:4px">강좌 찾기</button></div>'}
 function filtered(){
   const ce=$('fCenter').value,q=$('fQ').value.trim(),adult=$('fAdult').checked;
   return COURSES.filter(c=>(ce===''||c[0]==ce)&&(statFilter<0||c[1]===statFilter)&&(!q||c[2].includes(q)||c[3].includes(q))&&(!adult||!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]+c[2])))}
@@ -483,6 +485,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
   else if(t.dataset.delc)confirmRemove(t.dataset.delc);
   else if(t.dataset.del){state.courses=state.courses.filter(k=>k!==t.dataset.del);save();renderAll();toast('내 강좌에서 뺐어요')}
   else if(t.dataset.page){page=+t.dataset.page;renderSearch();$('resList').scrollIntoView({block:'start'})}
+  else if(t.dataset.goview)goView(t.dataset.goview);
   else if(t.id==='closeM')$('modal').classList.remove('on')});
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('on')});
@@ -498,10 +501,14 @@ $('fStat').addEventListener('click',e=>{const b=e.target.closest('[data-stat]');
 ['fCenter','fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{page=1;renderSearch()}));
 
 /* ---- desktop pages: switch views via header nav ---- */
-{const nav=[...document.querySelectorAll('.topnav [data-view]')],links=[...document.querySelectorAll('.topnav .nlink')];
- const setView=v=>{document.body.dataset.view=v;links.forEach(b=>b.classList.toggle('on',b.dataset.view===v));window.scrollTo({top:0})};
- nav.forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
- links.forEach(b=>b.classList.toggle('on',b.dataset.view==='home'));}
+function goView(v){
+  document.body.dataset.view=v;
+  document.querySelectorAll('.topnav .nlink').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
+  if(window.matchMedia('(min-width:861px)').matches)window.scrollTo({top:0});
+  else{const anchor={home:'sec-today',search:'page-search',badges:'sec-badges',rewards:'sec-rewards'}[v],el=anchor&&$(anchor);if(el)el.scrollIntoView({block:'start'})}}
+{const nav=[...document.querySelectorAll('.topnav [data-view]')];
+ nav.forEach(b=>b.addEventListener('click',()=>goView(b.dataset.view)));
+ document.querySelectorAll('.topnav .nlink').forEach(b=>b.classList.toggle('on',b.dataset.view==='home'));}
 
 /* ---- mobile section tabs: highlight the section in view ---- */
 {const tabs=[...document.querySelectorAll('.tabbar a')],map={};
