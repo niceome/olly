@@ -15,6 +15,7 @@
 import argparse
 import csv
 import datetime as dt
+import fnmatch
 import glob
 import io
 import json
@@ -23,6 +24,7 @@ import re
 import sys
 import urllib.error
 import urllib.parse
+import unicodedata
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -151,14 +153,26 @@ def read_csv(path):
     return list(csv.DictReader(io.StringIO(text)))
 
 
+def raw_files(ds):
+    """data/raw 에서 ds 의 파일 이름 패턴에 맞는 CSV.
+    macOS에서 올린 파일은 한글 자모가 분리된(NFD) 이름이라 NFC로 맞춘 뒤 비교한다."""
+    if not os.path.isdir(RAW):
+        return []
+    out = []
+    for name in os.listdir(RAW):
+        n = unicodedata.normalize('NFC', name)
+        if fnmatch.fnmatch(n, ds['raw_glob']) and not any(x in n for x in ds.get('raw_exclude', [])):
+            out.append(os.path.join(RAW, name))
+    return out
+
+
 def latest_raw(ds):
-    files = [f for f in glob.glob(os.path.join(RAW, ds['raw_glob']))
-             if not any(x in os.path.basename(f) for x in ds.get('raw_exclude', []))]
+    files = raw_files(ds)
     if not files:
         return None
 
     def k(f):
-        d = re.findall(r'20\d{6}', os.path.basename(f))
+        d = re.findall(r'20\d{6}', unicodedata.normalize('NFC', os.path.basename(f)))
         return (max(d) if d else '', os.path.getmtime(f))
     return max(files, key=k)
 
@@ -179,7 +193,7 @@ def get_rows(ds, key, offline, from_cache=False):
             log(f'  ! 오픈API 실패: {e}')
     f = latest_raw(ds)
     if f:
-        log(f'  최신 파일: {os.path.relpath(f, ROOT)}')
+        log(f"  최신 파일: {unicodedata.normalize('NFC', os.path.relpath(f, ROOT))}")
         return read_csv(f), 'csv'
     return None, None
 

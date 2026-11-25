@@ -10,10 +10,12 @@
 
 새 파일이 없거나 페이지를 읽지 못해도 실패로 끝내지 않는다 (자동 갱신을 막지 않기 위해).
 """
+import fnmatch
 import glob
 import json
 import os
 import re
+import unicodedata
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,9 +45,9 @@ def portal_date(ds):
 
 def local_date(ds):
     best = ''
-    for f in glob.glob(os.path.join(RAW, ds['raw_glob'])):
-        name = os.path.basename(f)
-        if any(x in name for x in ds.get('raw_exclude', [])):
+    for name in (os.listdir(RAW) if os.path.isdir(RAW) else []):
+        name = unicodedata.normalize('NFC', name)  # macOS에서 올린 파일은 NFD 이름
+        if not fnmatch.fnmatch(name, ds['raw_glob']) or any(x in name for x in ds.get('raw_exclude', [])):
             continue
         d = re.findall(r'20\d{6}', name)
         if d and max(d) > best:
