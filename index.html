@@ -261,18 +261,34 @@ body[data-view=mypage] #page-rewards{background:var(--soft)}
 .gp-h{display:flex;align-items:baseline;gap:10px;padding-right:30px}
 .gp-h b{font-family:Jua,sans-serif;font-weight:400;font-size:20px}
 .gp-h span{font-size:13px;color:var(--mute)}
-.gp-n{font-size:12px;color:var(--mute);margin:4px 0 8px}
+.gp-n{font-size:12px;color:var(--mute);margin:10px 0 0;text-align:center}
 .gp-x{position:absolute;top:8px;right:8px;width:32px;height:32px;border:0;background:none;color:var(--mute);font-size:20px;line-height:1;cursor:pointer;border-radius:8px}
-.gr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 8px;padding:8px 0;border-top:1px solid var(--line)}
-.gn{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.gn i{width:10px;height:10px;border-radius:50%;flex:none}
-.gn b{font-size:14px}
-.gn small{font-size:12px;color:var(--mute)}
-.gx{font-size:12px;color:var(--mute);text-align:right;white-space:nowrap;align-self:center}
-.gx.max{color:var(--acc2);font-weight:700}
-.gt{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap}
-.tch{font-size:12px;border-radius:99px;padding:1px 9px;border:1.5px solid var(--tc);color:var(--mute)}
-.tch.got{background:var(--tc);color:#fff;font-weight:700}
+.gtiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.gtile{font:inherit;color:var(--ink);cursor:pointer;display:grid;justify-items:center;gap:2px;text-align:center;background:color-mix(in srgb,var(--sc) 10%,var(--card));border:1.5px solid color-mix(in srgb,var(--sc) 40%,var(--line));border-radius:14px;padding:10px 6px 8px}
+.gtile svg{width:46px;height:46px;color:var(--sc);fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.gtile b{font-size:14px;line-height:1.2;overflow-wrap:anywhere}
+.gtile small{font-size:12px;color:var(--mute)}
+.gtile.lock{background:var(--soft);border-color:var(--line)}
+.gtile.lock svg{color:var(--mute);opacity:.35}
+.gtile.lock b{color:var(--mute)}
+.gtile[aria-expanded=true]{outline:2px solid var(--sc);outline-offset:1px}
+.gdetail{margin-top:10px;background:color-mix(in srgb,var(--sc) 8%,var(--card));border:1.5px solid color-mix(in srgb,var(--sc) 35%,var(--line));border-radius:14px;padding:10px 12px}
+.gdetail>b{font-size:14px}
+.gsteps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.gstep{display:grid;justify-items:center;gap:3px;text-align:center;font:inherit;color:var(--ink);background:none;border:1.5px solid transparent;border-radius:12px;padding:6px 2px}
+button.gstep{cursor:pointer}
+.gstep svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;color:var(--sc)}
+.gstep span{font-size:13px;font-weight:700}
+.gstep small{font-size:11px;border-radius:99px;padding:0 8px}
+.gstep.lock svg{color:var(--mute);opacity:.35}
+.gstep.lock span,.gstep.lock small{color:var(--mute)}
+.gstep.have svg{opacity:.45}
+.gstep.have small{border:1px solid var(--sc);color:var(--sc)}
+.gstep.wear{border-color:var(--sc);background:var(--card)}
+.gstep.wear small{background:var(--sc);color:#fff;font-weight:700}
+.gdots{display:flex;gap:4px;margin-top:4px}
+.gdots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.gdots i.on{background:var(--sc)}
 /* character motion (disabled by prefers-reduced-motion rule above) */
 .ol-idle,.ol-egg,.ol-eyes,.ol-arm{transform-box:fill-box}
 .ol-idle{transform-origin:50% 100%;animation:ol-breathe 3.2s ease-in-out infinite}
@@ -486,11 +502,16 @@ function statXP(){const x=[0,0,0,0,0,0,0];for(const l of state.log)x[l.s]+=l.xp;
 function totalXP(){return state.log.reduce((a,l)=>a+l.xp,0)}
 function levelOf(xp){let lv=1,need=50,acc=0;while(xp>=acc+need){acc+=need;lv++;need=50+(lv-1)*20}return{lv,into:xp-acc,need}}
 const STAGES=[['알',1],['아기',3],['어린이',5],['운동선수',8],['챔피언',12]];
-const GEAR=['수경','덤벨','요가매트','라켓','헤드폰','명상 쿠션'];
-// 장비 단계: 능력치 Lv.2 기본 → Lv.5 은색 → Lv.10 금색 (능력치 레벨 = 경험치 30마다 1)
-const TIERS=[{lv:2,name:'기본'},{lv:5,name:'은색',chip:'#868e96',draw:'#c3c9d1'},{lv:10,name:'금색',chip:'#e8a200',draw:'#f0b400'}];
+// 장비: 능력치 Lv.2·5·10마다 같은 종류의 더 좋은 장비로 진화 (얼굴·오른손·바닥·발·귀·왼쪽 바닥 자리를 하나씩 사용) (능력치 레벨 = 경험치 30마다 1)
+const GEAR=[['수경','스노클 마스크','스쿠버 장비'],['덤벨','케틀벨','바벨'],['요가매트','요가 블록 세트','필라테스 리포머'],['운동화','러닝화','스파이크화'],['이어폰','헤드폰','헤드셋 마이크'],['명상 쿠션','명상 방석 세트','연꽃 명상대']];
+const TIERS=[2,5,10];
 const statLv=v=>Math.floor(v/30)+1;
-const tierOf=sl=>TIERS.filter(t=>sl>=t.lv).length;
+const tierOf=sl=>TIERS.filter(l=>sl>=l).length;
+// 착용: 능력치마다 장비 하나만. state.pick[i] 가 없으면 얻은 것 중 가장 좋은 장비, -1이면 착용 안 함
+function pickOf(i,xp){const t=tierOf(statLv(xp[i]));if(!t)return -1;const p=(state.pick||{})[i];return p==null||p>=t?t-1:p}
+function worn(i,j,xp){return j<tierOf(statLv(xp[i]))&&pickOf(i,xp)===j}
+function toggleWear(i,j){const xp=statXP();if(j>=tierOf(statLv(xp[i])))return;
+  state.pick={...(state.pick||{}),[i]:pickOf(i,xp)===j?-1:j};save();renderHero()}
 function stageIdx(lv){let i=0;STAGES.forEach((s,j)=>{if(lv>=s[1])i=j});return i}
 function stageOf(lv){return STAGES[stageIdx(lv)][0]}
 function weekKey(d){const t=new Date(d);t.setHours(0,0,0,0);t.setDate(t.getDate()-((t.getDay()+6)%7));return ymd(t)}
@@ -520,8 +541,7 @@ function rewardHTML(list){return list.map(r=>`<div class="rw ${r.ok?'ok':''}"><d
 
 /* ---- character ---- */
 function drawTree(){
-  const xp=statXP(),lv=levelOf(totalXP()).lv,si=stageIdx(lv),tier=i=>tierOf(statLv(xp[i])),has=i=>tier(i)>=1,G=(i,base)=>tier(i)>=2?TIERS[tier(i)-1].draw:base;
-  const spark=(i,sx,sy)=>tier(i)>=3?`<path d="M${sx} ${sy-9} L${sx+2.5} ${sy-2.5} L${sx+9} ${sy} L${sx+2.5} ${sy+2.5} L${sx} ${sy+9} L${sx-2.5} ${sy+2.5} L${sx-9} ${sy} L${sx-2.5} ${sy-2.5}Z" fill="#fff"/>`:'';
+  const xp=statXP(),lv=levelOf(totalXP()).lv,si=stageIdx(lv),tier=i=>tierOf(statLv(xp[i])),has=(i,t=1)=>worn(i,t-1,xp);
   const sc=[0.62,0.62,0.8,1,1.06][si],Y='#ffd43b',Yd='#f2b705',K='#14231a';
   const ground=`<ellipse cx="200" cy="332" rx="150" ry="16" fill="#1e6b30" opacity=".55"/><ellipse cx="200" cy="330" rx="70" ry="8" fill="#000" opacity=".2"/>`;
   let body='';
@@ -532,42 +552,72 @@ function drawTree(){
      <path d="M132 238 L158 226 L176 242 L198 224 L220 244 L242 228 L268 238" stroke="${K}" stroke-width="3" fill="none" stroke-linejoin="round"/>
      <g class="ol-eyes"><circle cx="182" cy="212" r="7" fill="${K}"/><circle cx="218" cy="212" r="7" fill="${K}"/></g></g>`;
   }else{
-    const mus=has(1)&&si>=3;
-    const arm=(sx)=>`<g class="ol-arm ${sx<0?'l':'r'}"><path d="M${sx*58} -96 Q${sx*92} -88 ${sx*98} -58" stroke="${Y}" stroke-width="${si>=3?20:16}" fill="none" stroke-linecap="round"/>${mus?`<circle cx="${sx*80}" cy="-90" r="14" fill="${Y}"/><path d="M${sx*72} -98 q${sx*8} -6 ${sx*16} 0" stroke="${Yd}" stroke-width="3" fill="none"/>`:''}</g>`;
+    const mus=tier(1)>=1&&si>=3,w=k=>pickOf(k,xp)+1,W0=w(0),W1=w(1),W2=w(2),W3=w(3),W4=w(4),W5=w(5);
+    // 오른손: 덤벨 → 케틀벨 → 바벨 (팔과 함께 움직임)
+    const hold=W1===1?`<g transform="translate(104 -56)"><rect x="-26" y="-3" width="52" height="6" rx="3" fill="#495057"/><rect x="-30" y="-14" width="10" height="28" rx="3" fill="#e8590c"/><rect x="20" y="-14" width="10" height="28" rx="3" fill="#e8590c"/></g>`
+      :W1===2?`<g transform="translate(100 -36)"><path d="M-11 -18 a11 11 0 0 1 22 0" stroke="#495057" stroke-width="6" fill="none"/><circle cx="0" cy="2" r="20" fill="#e8590c"/><ellipse cx="-6" cy="-4" rx="6" ry="4" fill="#fff" opacity=".3"/></g>`
+      :W1===3?`<g transform="translate(108 -58)"><rect x="-34" y="-3" width="68" height="6" rx="3" fill="#495057"/><rect x="-30" y="-20" width="11" height="40" rx="3" fill="#c92a2a"/><rect x="19" y="-20" width="11" height="40" rx="3" fill="#c92a2a"/><rect x="-38" y="-14" width="8" height="28" rx="3" fill="#e8590c"/><rect x="30" y="-14" width="8" height="28" rx="3" fill="#e8590c"/></g>`:'';
+    const arm=(sx)=>`<g class="ol-arm ${sx<0?'l':'r'}"><path d="M${sx*58} -96 Q${sx*92} -88 ${sx*98} -58" stroke="${Y}" stroke-width="${si>=3?20:16}" fill="none" stroke-linecap="round"/>${mus?`<circle cx="${sx*80}" cy="-90" r="14" fill="${Y}"/><path d="M${sx*72} -98 q${sx*8} -6 ${sx*16} 0" stroke="${Yd}" stroke-width="3" fill="none"/>`:''}${sx>0?hold:''}</g>`;
     let g='';
-    if(has(2))g+=`<rect x="-112" y="-6" width="224" height="14" rx="7" fill="${G(2,'#ae3ec9')}"/>${spark(2,100,-16)}<rect x="-112" y="-6" width="224" height="5" rx="3" fill="#fff" opacity=".25"/>`;
+    // 등: 스쿠버 산소통
+    if(W0===3)g+=`<rect x="-94" y="-178" width="32" height="106" rx="15" fill="#1c7ed6"/><rect x="-94" y="-150" width="32" height="8" fill="#fff" opacity=".3"/><rect x="-87" y="-192" width="18" height="16" rx="4" fill="#495057"/>`;
+    // 바닥: 요가매트 → 매트+블록 → 필라테스 리포머
+    if(W2===1||W2===2)g+=`<rect x="-112" y="-6" width="224" height="14" rx="7" fill="#ae3ec9"/><rect x="-112" y="-6" width="224" height="5" rx="3" fill="#fff" opacity=".25"/>`;
+    if(W2===2)g+=`<rect x="-106" y="-28" width="24" height="22" rx="3" fill="#da77f2"/><rect x="82" y="-28" width="24" height="22" rx="3" fill="#da77f2"/><path d="M-106 -21 H-82 M82 -21 H106" stroke="#fff" stroke-width="2" opacity=".5"/>`;
+    if(W2===3)g+=`<rect x="-122" y="-4" width="244" height="11" rx="4" fill="#c08552"/><rect x="-116" y="7" width="10" height="10" fill="#8d5a33"/><rect x="106" y="7" width="10" height="10" fill="#8d5a33"/><rect x="-116" y="-8" width="232" height="4" rx="2" fill="#adb5bd"/><rect x="-114" y="-62" width="8" height="58" rx="3" fill="#495057"/><rect x="-124" y="-66" width="28" height="8" rx="4" fill="#495057"/><rect x="-66" y="-20" width="132" height="13" rx="6" fill="#ae3ec9"/>`;
+    // 왼쪽 바닥: 명상 쿠션 → 방석 세트 → 연꽃 명상대
+    if(W5===1)g+=`<g transform="translate(-150 0)"><ellipse rx="26" ry="10" fill="#0ca678"/><ellipse cy="-4" rx="20" ry="5" fill="#fff" opacity=".3"/><circle cx="-26" cy="2" r="3.5" fill="#0ca678"/><circle cx="26" cy="2" r="3.5" fill="#0ca678"/></g>`;
+    if(W5===2)g+=`<g transform="translate(-150 0)"><rect x="-32" y="-6" width="64" height="12" rx="4" fill="#087f5b"/><ellipse cx="0" cy="-15" rx="22" ry="11" fill="#20c997"/><path d="M-21 -15 H21" stroke="#087f5b" stroke-width="2" opacity=".6"/></g>`;
+    if(W5===3)g+=`<g transform="translate(-150 0)"><ellipse cy="3" rx="34" ry="8" fill="#2b8a3e"/><ellipse cx="-20" cy="-8" rx="9" ry="16" transform="rotate(-55 -20 -8)" fill="#f783ac"/><ellipse cx="20" cy="-8" rx="9" ry="16" transform="rotate(55 20 -8)" fill="#f783ac"/><ellipse cx="-10" cy="-14" rx="9" ry="18" transform="rotate(-22 -10 -14)" fill="#faa2c1"/><ellipse cx="10" cy="-14" rx="9" ry="18" transform="rotate(22 10 -14)" fill="#faa2c1"/><ellipse cx="0" cy="-18" rx="9" ry="20" fill="#fcc2d7"/><ellipse cy="-4" rx="16" ry="5" fill="#ffd43b"/></g>`;
+    // 발: 운동화 → 러닝화 → 스파이크화
     g+=`<ellipse cx="-30" cy="-6" rx="24" ry="13" fill="${Yd}"/><ellipse cx="30" cy="-6" rx="24" ry="13" fill="${Yd}"/>`;
+    const shoe=(sx,col,sole,extra)=>`<path d="M${sx*4} -1 Q${sx*3} -21 ${sx*28} -22 Q${sx*55} -21 ${sx*58} -1 Z" fill="${col}"/><path d="M${sx*3} 1 H${sx*60}" stroke="${sole}" stroke-width="6" stroke-linecap="round"/>${extra(sx)}`;
+    const shoes=(col,sole,extra)=>shoe(-1,col,sole,extra)+shoe(1,col,sole,extra);
+    if(W3===1)g+=shoes('#f8f9fa','#339af0',sx=>`<path d="M${sx*18} -15 h${sx*14} M${sx*18} -9 h${sx*14}" stroke="#adb5bd" stroke-width="2.5" stroke-linecap="round"/>`);
+    if(W3===2)g+=shoes('#fd7e14','#fff',sx=>`<path d="M${sx*14} -8 L${sx*46} -15" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`);
+    if(W3===3)g+=shoes('#e03131','#212529',sx=>`<path d="M${sx*12} 4 l${sx*3} 7 l${sx*3} -7 M${sx*28} 4 l${sx*3} 7 l${sx*3} -7 M${sx*44} 4 l${sx*3} 7 l${sx*3} -7" stroke="#868e96" stroke-width="2.5" fill="none"/><path d="M${sx*14} -8 L${sx*46} -15" stroke="#fcc419" stroke-width="4" stroke-linecap="round"/><path d="M${sx*56} -14 q${sx*20} -16 ${sx*32} -8 q${sx*-8} 3 ${sx*-12} 7 q${sx*-8} 3 ${sx*-20} 1z" fill="#fff" stroke="#dee2e6" stroke-width="1.5"/>`);
     g+=arm(-1)+arm(1);
     g+=`<ellipse cx="0" cy="-92" rx="70" ry="${si>=3?84:78}" fill="${Y}"/><path d="M20 -172 C70 -160 78 -40 30 -10 C60 -50 62 -130 20 -172Z" fill="${Yd}" opacity=".6"/><ellipse cx="-30" cy="-140" rx="16" ry="10" fill="#fff" opacity=".45"/>`;
     g+=`<g class="ol-eyes"><ellipse cx="-24" cy="-108" rx="7" ry="8" fill="${K}"/><ellipse cx="24" cy="-108" rx="7" ry="8" fill="${K}"/><circle cx="-22" cy="-111" r="2.5" fill="#fff"/><circle cx="26" cy="-111" r="2.5" fill="#fff"/></g>`;
     g+=`<path d="M-14 -88 Q0 -76 14 -88" stroke="${K}" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="-44" cy="-92" r="8" fill="#ff8787" opacity=".7"/><circle cx="44" cy="-92" r="8" fill="#ff8787" opacity=".7"/>`;
-    if(has(0))g+=`<path d="M-68 -140 Q0 -152 68 -140" stroke="${G(0,'#1864ab')}" stroke-width="7" fill="none"/><circle cx="-24" cy="-145" r="13" fill="#74c0fc" stroke="${G(0,'#1864ab')}" stroke-width="4"/><circle cx="24" cy="-145" r="13" fill="#74c0fc" stroke="${G(0,'#1864ab')}" stroke-width="4"/>${spark(0,46,-166)}`;
-    if(has(4))g+=`<path d="M-66 -120 Q-60 -196 0 -198 Q60 -196 66 -120" stroke="${G(4,'#c2255c')}" stroke-width="8" fill="none"/><rect x="-80" y="-136" width="20" height="32" rx="9" fill="${G(4,'#e64980')}"/><rect x="60" y="-136" width="20" height="32" rx="9" fill="${G(4,'#e64980')}"/>${spark(4,-90,-150)}`;
-    if(has(5))g+=`<g transform="translate(70 -2)"><ellipse cx="0" cy="0" rx="30" ry="11" fill="${G(5,'#0ca678')}"/><ellipse cx="0" cy="-4" rx="24" ry="6" fill="#fff" opacity=".3"/><circle cx="-30" cy="2" r="3.5" fill="${G(5,'#0ca678')}"/><circle cx="30" cy="2" r="3.5" fill="${G(5,'#0ca678')}"/></g>${spark(5,104,-18)}`;
-    if(has(1))g+=`<g transform="translate(104 -56)"><rect x="-26" y="-3" width="52" height="6" rx="3" fill="#495057"/><rect x="-30" y="-14" width="10" height="28" rx="3" fill="${G(1,'#e8590c')}"/><rect x="20" y="-14" width="10" height="28" rx="3" fill="${G(1,'#e8590c')}"/></g>${spark(1,130,-84)}`;
-    if(has(3))g+=`<g transform="translate(-102 -56) rotate(-25)"><rect x="-3" y="-4" width="6" height="34" rx="3" fill="#495057"/><ellipse cx="0" cy="-30" rx="20" ry="26" fill="none" stroke="${G(3,'#f59f00')}" stroke-width="6"/><path d="M-12 -44 L12 -16 M12 -44 L-12 -16 M-18 -30 L18 -30" stroke="${G(3,'#f59f00')}" stroke-width="1.5" opacity=".7"/></g>${spark(3,-136,-100)}`;
-    if(si===4)g+=`<circle cx="-30" cy="-50" r="13" fill="#fcc419" stroke="#f08c00" stroke-width="3"/><path d="M-36 -64 L-30 -54 L-24 -64" stroke="#1c7ed6" stroke-width="5" fill="none"/><path d="M-30 -178 l12 -24 18 16 18 -16 12 24z" fill="#fcc419" stroke="#f08c00" stroke-width="3"/>`;
+    if(si===4)g+=`<path d="M-30 -166 l12 -26 18 16 18 -16 12 26z" fill="#fcc419" stroke="#f08c00" stroke-width="3"/>`;
+    // 얼굴: 수경 → 스노클 마스크 → 스쿠버 장비(마스크+호흡기)
+    if(W0===1)g+=`<path d="M-68 -140 Q0 -152 68 -140" stroke="#1864ab" stroke-width="7" fill="none"/><circle cx="-24" cy="-145" r="13" fill="#74c0fc" stroke="#1864ab" stroke-width="4"/><circle cx="24" cy="-145" r="13" fill="#74c0fc" stroke="#1864ab" stroke-width="4"/>`;
+    if(W0>=2)g+=`<path d="M-68 -140 Q0 -152 68 -140" stroke="#1864ab" stroke-width="7" fill="none"/><rect x="-44" y="-164" width="88" height="36" rx="16" fill="#a5d8ff" stroke="#1864ab" stroke-width="5"/><path d="M-30 -156 L-16 -140" stroke="#fff" stroke-width="3" opacity=".7"/>`;
+    if(W0===2)g+=`<path d="M46 -146 Q58 -146 58 -162 L58 -206" stroke="#fd7e14" stroke-width="8" fill="none" stroke-linecap="round"/><rect x="51" y="-216" width="14" height="10" rx="3" fill="#fd7e14"/>`;
+    if(W0===3)g+=`<path d="M-72 -150 Q-98 -100 -40 -86 Q-26 -83 -16 -84" stroke="#212529" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="-8" cy="-84" r="11" fill="#495057"/><circle cx="-8" cy="-84" r="5" fill="#adb5bd"/>`;
+    // 귀: 이어폰 → 헤드폰 → 헤드셋 마이크
+    if(W4===1)g+=`<path d="M-66 -112 V-96 M66 -112 V-96" stroke="#f8f9fa" stroke-width="4" stroke-linecap="round"/><circle cx="-66" cy="-118" r="8" fill="#f8f9fa" stroke="#e64980" stroke-width="3"/><circle cx="66" cy="-118" r="8" fill="#f8f9fa" stroke="#e64980" stroke-width="3"/>`;
+    if(W4===2)g+=`<path d="M-66 -120 Q-60 -196 0 -198 Q60 -196 66 -120" stroke="#c2255c" stroke-width="8" fill="none"/><rect x="-80" y="-136" width="20" height="32" rx="9" fill="#e64980"/><rect x="60" y="-136" width="20" height="32" rx="9" fill="#e64980"/>`;
+    if(W4===3)g+=`<path d="M-66 -120 Q-60 -200 0 -202 Q60 -200 66 -120" stroke="#212529" stroke-width="10" fill="none"/><rect x="-86" y="-140" width="26" height="40" rx="11" fill="#343a40"/><rect x="60" y="-140" width="26" height="40" rx="11" fill="#343a40"/><circle cx="-73" cy="-120" r="7" fill="#f06595"/><circle cx="73" cy="-120" r="7" fill="#f06595"/><path d="M72 -104 Q70 -78 34 -78" stroke="#212529" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="30" cy="-78" rx="7" ry="6" fill="#212529"/>`;
+    if(si===4)g+=`<circle cx="-30" cy="-50" r="13" fill="#fcc419" stroke="#f08c00" stroke-width="3"/><path d="M-36 -64 L-30 -54 L-24 -64" stroke="#1c7ed6" stroke-width="5" fill="none"/>`;
     body=`<g transform="translate(200 330) scale(${sc})"><g class="ol-idle">${g}</g></g>`;
   }
   $('stage').innerHTML=`<svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${ground}${body}</svg>`;
-  $('miniStage').innerHTML=`<svg viewBox="70 110 260 250" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${ground}${body}</svg>`}
-
+  $('miniStage').innerHTML=`<svg viewBox="30 70 340 290" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${ground}${body}</svg>`}
 
 /* ---- render ---- */
+// 도감 아이콘 (40x40, 색은 currentColor)
+const GICON=[
+ ['<path d="M4 18 Q20 13 36 18" stroke-width="3"/><circle cx="13" cy="20" r="6" fill="#d0ebff"/><circle cx="27" cy="20" r="6" fill="#d0ebff"/>','<rect x="4" y="16" width="26" height="14" rx="6" fill="#d0ebff" stroke-width="3"/><path d="M30 22 Q35 22 35 16 V4" stroke="#fd7e14" stroke-width="4"/>','<rect x="3" y="8" width="11" height="28" rx="5.5" fill="currentColor"/><rect x="5" y="4" width="7" height="5" rx="1.5" fill="#495057" stroke="none"/><rect x="17" y="10" width="20" height="13" rx="5" fill="#d0ebff" stroke-width="3"/><path d="M14 22 Q16 32 26 31" stroke="#212529" stroke-width="2.5"/><circle cx="28" cy="31" r="3.5" fill="#495057" stroke="none"/>'],
+ ['<rect x="9" y="18" width="22" height="4" rx="2" fill="#495057" stroke="none"/><rect x="5" y="11" width="6" height="18" rx="2" fill="currentColor"/><rect x="29" y="11" width="6" height="18" rx="2" fill="currentColor"/>','<path d="M14 14 a6 6 0 0 1 12 0" stroke="#495057" stroke-width="3.5"/><circle cx="20" cy="24" r="11" fill="currentColor"/>','<rect x="3" y="18" width="34" height="4" rx="2" fill="#495057" stroke="none"/><rect x="7" y="8" width="6" height="24" rx="2" fill="currentColor"/><rect x="27" y="8" width="6" height="24" rx="2" fill="currentColor"/><rect x="3" y="12" width="4" height="16" rx="1.5" fill="currentColor"/><rect x="33" y="12" width="4" height="16" rx="1.5" fill="currentColor"/>'],
+ ['<rect x="4" y="24" width="24" height="8" rx="4" fill="currentColor"/><circle cx="30" cy="25" r="7" fill="currentColor"/><circle cx="30" cy="25" r="3" fill="#fff" stroke="none"/>','<rect x="3" y="27" width="34" height="6" rx="3" fill="currentColor"/><rect x="5" y="14" width="10" height="13" rx="2" fill="currentColor" opacity=".6"/><rect x="25" y="14" width="10" height="13" rx="2" fill="currentColor" opacity=".6"/>','<rect x="3" y="24" width="34" height="5" rx="2" fill="#c08552" stroke="none"/><rect x="13" y="19" width="16" height="5" rx="2" fill="currentColor"/><path d="M6 24 V10 M2 10 H10" stroke="#495057" stroke-width="3"/><path d="M6 29 V35 M34 29 V35" stroke="#8d5a33" stroke-width="3"/>'],
+ ['<path d="M5 29 Q5 17 14 17 L22 19 Q30 21 35 29Z" fill="#f8f9fa"/><path d="M4 32 H36" stroke-width="3.5"/>','<path d="M5 28 Q5 18 14 18 L22 20 Q30 22 35 28 L35 32 L5 32Z" fill="currentColor"/><path d="M12 24 H26" stroke="#fff" stroke-width="2.5"/>','<path d="M5 27 Q5 17 14 17 L22 19 Q30 21 35 27Z" fill="currentColor"/><path d="M4 30 H36" stroke="#212529" stroke-width="3"/><path d="M9 31 l2 5 l2 -5 M19 31 l2 5 l2 -5 M29 31 l2 5 l2 -5" stroke="#868e96" stroke-width="1.5"/><path d="M5 19 q-4 -9 6 -11 q-2 5 2 7z" fill="#fff" stroke="#adb5bd" stroke-width="1"/>'],
+ ['<circle cx="12" cy="15" r="6" fill="currentColor"/><circle cx="28" cy="15" r="6" fill="currentColor"/><path d="M12 21 V33 M28 21 V33" stroke-width="3"/>','<path d="M8 24 Q8 6 20 6 Q32 6 32 24" stroke-width="3.5"/><rect x="5" y="20" width="7" height="12" rx="3" fill="currentColor"/><rect x="28" y="20" width="7" height="12" rx="3" fill="currentColor"/>','<path d="M8 22 Q8 5 20 5 Q32 5 32 22" stroke="#212529" stroke-width="4"/><rect x="4" y="17" width="8" height="13" rx="3" fill="#343a40" stroke="none"/><rect x="28" y="17" width="8" height="13" rx="3" fill="#343a40" stroke="none"/><path d="M8 30 Q10 36 21 35" stroke="#212529" stroke-width="2.5"/><circle cx="23" cy="35" r="3" fill="currentColor" stroke="none"/>'],
+ ['<ellipse cx="20" cy="26" rx="15" ry="6" fill="currentColor"/><ellipse cx="20" cy="23" rx="11" ry="3" fill="#fff" opacity=".35" stroke="none"/>','<rect x="4" y="26" width="32" height="7" rx="3" fill="currentColor" opacity=".6"/><ellipse cx="20" cy="21" rx="11" ry="6" fill="currentColor"/>','<ellipse cx="11" cy="24" rx="5" ry="10" transform="rotate(-38 11 24)" fill="#f783ac" stroke="none"/><ellipse cx="29" cy="24" rx="5" ry="10" transform="rotate(38 29 24)" fill="#f783ac" stroke="none"/><ellipse cx="20" cy="20" rx="5.5" ry="12" fill="#fcc2d7" stroke="none"/><path d="M5 34 H35" stroke-width="3"/>']];
+let gearSel=-1;
 function gearHTML(xp){
   let got=0;
-  const rows=STATS.slice(0,6).map((s,i)=>{const sl=statLv(xp[i]),t=tierOf(sl),next=TIERS[t];got+=t;
-    const chips=TIERS.map((T,j)=>`<span class="tch ${t>j?'got':''}" style="--tc:${T.chip||SC[i]}">${T.name} Lv.${T.lv}</span>`).join('');
-    const note=next?`${next.name}까지 ${(next.lv-1)*30-xp[i]} 경험치`:'최고 단계';
-    return `<div class="gr"><div class="gn"><i style="background:${SC[i]}"></i><b>${esc(GEAR[i])}</b><small>${esc(s)} Lv.${sl}</small></div><div class="gx ${next?'':'max'}">${esc(note)}</div><div class="gt">${chips}</div></div>`}).join('');
-  return `<button class="gp-x" data-gearclose aria-label="장비 도감 닫기">×</button><div class="gp-h"><b>장비 도감</b><span>${got} / ${TIERS.length*6}단계</span></div><p class="gp-n">능력치 Lv.2에 장비를 얻고, Lv.5에 은색, Lv.10에 금색으로 강화돼요. 능력치는 경험치 30마다 1레벨씩 올라요.</p>${rows}`}
-function pokeChar(box){
-  const st=box.querySelector('.stage,.mini');st.classList.remove('hop');void st.offsetWidth;st.classList.add('hop');
-  const now=simNow(),m=now.getHours()*60+now.getMinutes();
-  const openNow=state.courses.map(findCourse).filter(Boolean).some(c=>{const[ws,we]=windowOf(c);return daySet(c[5]).has(now.getDay())&&!checkedToday(keyOf(c),now)&&m>=ws&&m<=we});
-  const lines=openNow?['지금 출석 체크할 수 있어요!']:['오늘도 같이 운동해요!','다음 수업이 기다려져요','물 많이 마시기!','스트레칭 잊지 말아요','꾸준함이 최고예요'];
-  let b=box.querySelector('.bubble');if(!b){b=document.createElement('div');b.className='bubble';b.setAttribute('aria-hidden','true');box.appendChild(b)}
-  b.textContent=lines[Math.floor(Math.random()*lines.length)];b.classList.add('on');clearTimeout(b.h);b.h=setTimeout(()=>b.classList.remove('on'),1800)}
+  const tiles=STATS.slice(0,6).map((s,i)=>{const t=tierOf(statLv(xp[i]));got+=t;
+    const show=Math.max(t,1)-1,name=t?GEAR[i][t-1]:'잠김';
+    const dots=TIERS.map((_,j)=>`<i class="${t>j?'on':''}"></i>`).join('');
+    return `<button class="gtile ${t?'':'lock'}" style="--sc:${SC[i]}" data-gtile="${i}" aria-expanded="${gearSel===i}" aria-label="${esc(s)} 장비 ${esc(name)}, ${t}/3단계. 눌러서 단계별 장비 보기"><svg viewBox="0 0 40 40" aria-hidden="true">${GICON[i][show]}</svg><b>${esc(name)}</b><small>${esc(s)}</small><span class="gdots">${dots}</span></button>`}).join('');
+  let detail='';
+  if(gearSel>=0){const i=gearSel,t=tierOf(statLv(xp[i]));
+    detail=`<div class="gdetail" style="--sc:${SC[i]}"><b>${esc(STATS[i])} 장비</b><div class="gsteps">${TIERS.map((l,j)=>{const nm=esc(GEAR[i][j]),ic=`<svg viewBox="0 0 40 40" aria-hidden="true">${GICON[i][j]}</svg>`;
+      if(t<=j)return `<div class="gstep lock">${ic}<span>${nm}</span><small>${esc(STATS[i])} Lv.${l}</small></div>`;
+      const w=worn(i,j,xp);return `<button class="gstep ${w?'wear':'have'}" data-wear="${i}-${j}" aria-pressed="${w}" aria-label="${nm} ${w?'착용 중, 눌러서 빼기':'눌러서 착용하기'}">${ic}<span>${nm}</span><small>${w?'착용 중':'착용하기'}</small></button>`}).join('')}</div><p class="gp-n" style="margin-top:6px">장비는 능력치마다 하나만 착용할 수 있어요.</p></div>`}
+  return `<button class="gp-x" data-gearclose aria-label="장비 도감 닫기">×</button><div class="gp-h"><b>장비 도감</b><span>${got} / 18</span></div><div class="gtiles">${tiles}</div>${detail}<p class="gp-n">${gearSel<0?'칸을 누르면 단계별 장비를 볼 수 있어요.':'수업에 출석할수록 더 좋은 장비를 착용해요.'}</p>`}
 function closeGear(){document.querySelectorAll('.gearpop').forEach(p=>p.hidden=true);document.querySelectorAll('.gearbtn').forEach(b=>b.setAttribute('aria-expanded','false'))}
 function toggleGear(btn){const pop=$('gearPop'+btn.dataset.gear),open=pop.hidden;closeGear();if(open){pop.hidden=false;btn.setAttribute('aria-expanded','true')}}
 function renderHero(){
@@ -675,7 +725,8 @@ function doCheck(k){
   const tierBefore=tierOf(statLv(statXP()[c[1]])),okBefore=new Set(rewards().filter(r=>r.ok).map(r=>r.id)),before=levelOf(totalXP()).lv,bonus=streakWeeks(now)>=2?5:0,xp=10+bonus;
   state.log.push({k,d:ymd(now),s:c[1],sp:c[2],xp,m:parseTime(c[4])[0]});save();
   const after=levelOf(totalXP()).lv;renderAll();
-  const tierAfter=tierOf(statLv(statXP()[c[1]])),gearMsg=tierAfter>tierBefore?(tierAfter===1?`${GEAR[c[1]]}${eulReul(GEAR[c[1]])} 얻었어요!`:`${GEAR[c[1]]}${eulReul(GEAR[c[1]])} ${TIERS[tierAfter-1].name}으로 강화했어요!`):'';
+  const tierAfter=tierOf(statLv(statXP()[c[1]]));if(tierAfter>tierBefore&&state.pick){delete state.pick[c[1]];save();renderHero()}
+  const gNew=tierAfter>tierBefore?GEAR[c[1]][tierAfter-1]:'',gearMsg=gNew?`새 장비 ${gNew}${eulReul(gNew)} 착용했어요!`:'';
   growthToast(c[1],xp,bonus,gearMsg);for(const st of [$('stage'),$('miniStage')]){st.classList.remove('hop');void st.offsetWidth;st.classList.add('hop')}
   const fresh=rewards().filter(r=>r.ok&&!okBefore.has(r.id));
   if(after>before||fresh.length)levelUp(after>before?after:0,fresh)}
@@ -712,12 +763,14 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
   else if(t.dataset.goview)goView(t.dataset.goview);
   else if(t.dataset.gear)toggleGear(t);
   else if('gearclose' in t.dataset)closeGear();
+  else if(t.dataset.wear){const[i,j]=t.dataset.wear.split('-').map(Number);toggleWear(i,j);const b=document.querySelector(`#${t.closest('.gearpop').id} [data-wear="${i}-${j}"]`);if(b)b.focus()}
+  else if(t.dataset.gtile){const i=+t.dataset.gtile;gearSel=gearSel===i?-1:i;const h=gearHTML(statXP());$('gearPopM').innerHTML=$('gearPopS').innerHTML=h;const b=t.closest('.gearpop').querySelector(`[data-gtile="${i}"]`);if(b)b.focus()}
   else if(t.dataset.view)goView(t.dataset.view);
   else if(t.id==='meToggle'){const open=t.getAttribute('aria-expanded')!=='true';t.setAttribute('aria-expanded',open);$('meDetail').hidden=!open;t.textContent=open?'접기 ▴':'자세히 ▾'}
   else if(t.id==='closeM')$('modal').classList.remove('on')});
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('modal').classList.remove('on');closeGear()}});
-document.addEventListener('click',e=>{if(!e.target.closest('.charbox'))closeGear();const ch=e.target.closest('.stage,.mini');if(ch&&state)pokeChar(ch.parentElement)});
+document.addEventListener('click',e=>{if(e.target.isConnected&&!e.target.closest('.charbox'))closeGear();const ch=e.target.closest('.stage,.mini');if(ch&&state)pokeChar(ch.parentElement)});
 $('nowBtn').onclick=()=>setSim(new Date());
 $('nextBtn').onclick=()=>{const t=nextSlot();if(t)setSim(t);else toast('이번 주에 남은 수업이 없어요')};
 $('simdt').onchange=renderAll;
