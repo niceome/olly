@@ -25,7 +25,7 @@ h2{font-size:28px}h3{font-size:20px}
 .wrap{max-width:1180px;margin:0 auto}
 .hero{background:var(--field);color:var(--fieldink)}
 .hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-areas:"brand panel" "stage panel" "path panel";gap:16px 28px;align-items:center}
-.brand{grid-area:brand;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand{grid-area:brand;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 .panel{grid-area:panel}
 .stage{grid-area:stage}
 .path{grid-area:path}
@@ -148,9 +148,30 @@ footer ul{margin:6px 0 0;padding-left:18px}
  .toast{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.topnav{display:none}
+@media(min-width:861px){
+ .topnav{display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:7;background:var(--card);border-bottom:1px solid var(--line);padding:8px max(5vw,16px)}
+ .topnav .brand2{font-family:Jua,sans-serif;font-size:24px;color:var(--field);background:none;border:0;cursor:pointer;padding:4px 6px;line-height:1}
+ .topnav .navlinks{display:flex;gap:6px}
+ .topnav .nlink{font:500 15px "Noto Sans KR",sans-serif;background:none;border:0;color:var(--ink);cursor:pointer;border-radius:10px;padding:8px 14px;min-height:40px}
+ .topnav .nlink:hover{background:var(--soft)}
+ .topnav .nlink.on{color:var(--field);background:var(--soft);font-weight:700}
+ body[data-view=home] #page-badges,body[data-view=home] #page-rewards{display:none}
+ body[data-view=badges] .hero,body[data-view=badges] #sec-today,body[data-view=badges] #sec-courses,body[data-view=badges] #page-rewards{display:none}
+ body[data-view=rewards] .hero,body[data-view=rewards] #sec-today,body[data-view=rewards] #sec-courses,body[data-view=rewards] #page-badges{display:none}
+ .path{grid-template-columns:repeat(5,minmax(0,100px));justify-content:center}
+}
 </style>
 </head>
-<body>
+<body data-view="home">
+<nav class="topnav" aria-label="메인 메뉴">
+  <button class="brand2" data-view="home">올리</button>
+  <div class="navlinks">
+    <button class="nlink" data-view="home">홈</button>
+    <button class="nlink" data-view="badges">배지</button>
+    <button class="nlink" data-view="rewards">혜택</button>
+  </div>
+</nav>
 <header class="band hero">
   <div class="wrap">
     <div class="brand"><h1>올리</h1><span>오늘 한 번의 출석이 내일의 체력이 됩니다</span></div>
@@ -207,13 +228,18 @@ footer ul{margin:6px 0 0;padding-left:18px}
   </div>
 </section>
 
-<section class="band">
-  <div class="wrap two">
+<section class="band" id="page-badges">
+  <div class="wrap">
     <div id="sec-badges">
       <h2>배지</h2>
       <p class="sub" id="badgeSum"></p>
       <div class="badges" id="badges"></div>
     </div>
+  </div>
+</section>
+
+<section class="band" id="page-rewards">
+  <div class="wrap">
     <div class="news" id="sec-rewards">
       <h2>센터 혜택</h2>
       <p class="sub">꾸준히 다니면 센터가 이미 하고 있는 등록·체험 이벤트와 연결돼요.</p>
@@ -470,6 +496,12 @@ $('fStat').innerHTML=['전체',...STATS.slice(0,6)].map((s,i)=>`<button class="b
 $('fStat').addEventListener('click',e=>{const b=e.target.closest('[data-stat]');if(!b)return;statFilter=+b.dataset.stat;
   for(const x of $('fStat').children){const on=x===b;x.setAttribute('aria-pressed',on);x.style.background=on?(statFilter<0?'var(--ink)':SC[statFilter]):''}page=1;renderSearch()});
 ['fCenter','fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{page=1;renderSearch()}));
+
+/* ---- desktop pages: switch views via header nav ---- */
+{const nav=[...document.querySelectorAll('.topnav [data-view]')],links=[...document.querySelectorAll('.topnav .nlink')];
+ const setView=v=>{document.body.dataset.view=v;links.forEach(b=>b.classList.toggle('on',b.dataset.view===v));window.scrollTo({top:0})};
+ nav.forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+ links.forEach(b=>b.classList.toggle('on',b.dataset.view==='home'));}
 
 /* ---- mobile section tabs: highlight the section in view ---- */
 {const tabs=[...document.querySelectorAll('.tabbar a')],map={};
