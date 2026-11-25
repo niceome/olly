@@ -16,6 +16,7 @@
 :root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1712);--ink:light-dark(#14231a,#e8f1ea);--mute:light-dark(#5d6f63,#9db2a3);--field:light-dark(#2f9e44,#1b5e2a);--fieldink:#ffffff;--card:light-dark(#ffffff,#16211a);--line:light-dark(#dfe8e1,#2a3a2f);--soft:light-dark(#f1f7f2,#1a271e);--acc:#ff5a3c;--acc2:light-dark(#d9480f,#ff8a6b)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip}
 h1,h2,h3{font-family:Jua,"Noto Sans KR",sans-serif;font-weight:400;letter-spacing:-.01em;line-height:1.1;margin:0}
@@ -121,6 +122,17 @@ footer ul{margin:6px 0 0;padding-left:18px}
 @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) auto}.row .t{grid-column:1/-1;font-size:20px}.news .row{grid-template-columns:minmax(0,1fr)}.filters{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .apply{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--acc2);text-decoration:none;border:1.5px solid currentColor;border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap;vertical-align:1px}.apply:hover{background:var(--acc2);color:#fff}.apply:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
+.tabbar{display:none}
+#sec-today,#sec-courses,#sec-badges,#sec-rewards{scroll-margin-top:12px}
+@media(max-width:860px){
+ .tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -2px 14px rgba(0,0,0,.1);padding:6px 4px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}
+ .tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;text-decoration:none;color:var(--mute);font-size:12px;font-weight:700;border-radius:12px;min-height:44px;justify-content:center}
+ .tabbar a svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+ .tabbar a.on{color:var(--field);background:var(--soft)}
+ .tabbar a:active{background:var(--soft)}
+ body{padding-bottom:calc(66px + env(safe-area-inset-bottom,0px))}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
@@ -141,7 +153,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
 </header>
 
 <main>
-<section class="band">
+<section class="band" id="sec-today">
   <div class="wrap">
     <div class="today">
       <div><h2>오늘 수업</h2><p class="sub" id="todayDate"></p></div>
@@ -157,7 +169,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
   </div>
 </section>
 
-<section class="band soft">
+<section class="band soft" id="sec-courses">
   <div class="wrap two">
     <div>
       <h2>내 강좌</h2>
@@ -182,12 +194,12 @@ footer ul{margin:6px 0 0;padding-left:18px}
 
 <section class="band">
   <div class="wrap two">
-    <div>
+    <div id="sec-badges">
       <h2>배지</h2>
       <p class="sub" id="badgeSum"></p>
       <div class="badges" id="badges"></div>
     </div>
-    <div class="news">
+    <div class="news" id="sec-rewards">
       <h2>센터 혜택</h2>
       <p class="sub">꾸준히 다니면 센터가 이미 하고 있는 등록·체험 이벤트와 연결돼요.</p>
       <div class="list" id="rewardList" style="margin-top:14px"></div>
@@ -211,6 +223,13 @@ footer ul{margin:6px 0 0;padding-left:18px}
     <p style="margin:8px 0 0">2026년도 공공데이터 활용 경진대회 출품용 프로토타입이에요. 캐릭터 올리는 이 서비스를 위해 새로 만든 캐릭터예요. 기록은 이 브라우저에만 저장돼요.</p>
   </div>
 </footer>
+
+<nav class="tabbar" aria-label="섹션 바로가기">
+  <a href="#sec-today"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>오늘</a>
+  <a href="#sec-courses"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>강좌</a>
+  <a href="#sec-badges"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 7 5-3 5 3-2-7"/></svg>배지</a>
+  <a href="#sec-rewards"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 12h18M12 8v13M12 8S9 3 6.5 4.5 9 8 12 8zM12 8s3-5 5.5-3.5S15 8 12 8z"/></svg>혜택</a>
+</nav>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div class="dlg" id="dlg"></div></div>
 <div class="toast" id="toast"></div>
@@ -414,6 +433,12 @@ $('fStat').addEventListener('click',e=>{const b=e.target.closest('[data-stat]');
   for(const x of $('fStat').children){const on=x===b;x.setAttribute('aria-pressed',on);x.style.background=on?(statFilter<0?'var(--ink)':SC[statFilter]):''}shown=40;renderSearch()});
 ['fCenter','fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{shown=40;renderSearch()}));
 $('moreBtn').onclick=()=>{shown+=40;renderSearch()};
+
+/* ---- mobile section tabs: highlight the section in view ---- */
+{const tabs=[...document.querySelectorAll('.tabbar a')],map={};
+ tabs.forEach(a=>map[a.getAttribute('href').slice(1)]=a);
+ const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){tabs.forEach(t=>t.classList.remove('on'));if(map[e.target.id])map[e.target.id].classList.add('on')}})},{rootMargin:'-45% 0px -45% 0px'});
+ Object.keys(map).forEach(id=>{const el=$(id);if(el)io.observe(el)});}
 
 Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').then(r=>r.json())]).then(([c,ev])=>{
   COURSES=c;EVENTS=ev;$('totalCount').textContent=c.length.toLocaleString('ko-KR');
