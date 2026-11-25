@@ -131,7 +131,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
 .toast .gt-bar{height:8px;border-radius:5px;background:color-mix(in srgb,currentColor 22%,transparent);overflow:hidden;margin:6px 0 3px}
 .toast .gt-bar i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s ease}
 .toast .gt-sub{font-size:12px;opacity:.8}
-@media(max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.hero .wrap{grid-template-areas:"brand" "panel" "stage" "path";gap:14px}.hero{padding-top:clamp(18px,4vw,28px)}.stage{aspect-ratio:1.6/1;max-height:none;max-width:420px;width:100%;margin-inline:auto}.today{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.hero .wrap{grid-template-areas:"brand" "panel" "stage" "path";gap:14px}.hero{padding-top:clamp(18px,4vw,28px)}.stage{aspect-ratio:1.6/1;max-height:none;max-width:420px;width:100%;margin-inline:auto}.today{grid-template-columns:minmax(0,1fr)}#sec-news,#sec-grow{display:none}}
 @media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) auto}.row .t{grid-column:1/-1;font-size:20px}.news .row{grid-template-columns:minmax(0,1fr)}.filters{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .apply{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--acc2);text-decoration:none;border:1.5px solid currentColor;border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap;vertical-align:1px}.apply:hover{background:var(--acc2);color:#fff}.apply:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
@@ -156,9 +156,10 @@ footer ul{margin:6px 0 0;padding-left:18px}
  .topnav .nlink:hover{background:var(--soft)}
  .topnav .nlink.on{color:var(--field);background:var(--soft);font-weight:700}
  body[data-view=home] #page-search,body[data-view=home] #page-badges,body[data-view=home] #page-rewards{display:none}
- body[data-view=search] .hero,body[data-view=search] #sec-today,body[data-view=search] #sec-courses,body[data-view=search] #page-badges,body[data-view=search] #page-rewards{display:none}
- body[data-view=badges] .hero,body[data-view=badges] #sec-today,body[data-view=badges] #sec-courses,body[data-view=badges] #page-search,body[data-view=badges] #page-rewards{display:none}
- body[data-view=rewards] .hero,body[data-view=rewards] #sec-today,body[data-view=rewards] #sec-courses,body[data-view=rewards] #page-search,body[data-view=rewards] #page-badges{display:none}
+ body[data-view=search] .hero,body[data-view=search] #sec-today,body[data-view=search] #sec-courses,body[data-view=search] #sec-news,body[data-view=search] #sec-grow,body[data-view=search] #page-badges,body[data-view=search] #page-rewards{display:none}
+ body[data-view=badges] .hero,body[data-view=badges] #sec-today,body[data-view=badges] #sec-courses,body[data-view=badges] #sec-news,body[data-view=badges] #sec-grow,body[data-view=badges] #page-search,body[data-view=badges] #page-rewards{display:none}
+ body[data-view=rewards] .hero,body[data-view=rewards] #sec-today,body[data-view=rewards] #sec-courses,body[data-view=rewards] #sec-news,body[data-view=rewards] #sec-grow,body[data-view=rewards] #page-search,body[data-view=rewards] #page-badges{display:none}
+ .recblock-rewards,.newsblock-rewards{display:none}
  .path{grid-template-columns:repeat(5,minmax(0,100px));justify-content:center}
 }
 </style>
@@ -214,6 +215,20 @@ footer ul{margin:6px 0 0;padding-left:18px}
   </div>
 </section>
 
+<section class="band" id="sec-news">
+  <div class="wrap">
+    <h2>내 센터 소식</h2>
+    <div class="list newsList" style="margin-top:12px"></div>
+  </div>
+</section>
+
+<section class="band soft" id="sec-grow">
+  <div class="wrap">
+    <h2>부족한 능력치 키우기</h2>
+    <div class="list recList" style="margin-top:12px"></div>
+  </div>
+</section>
+
 <section class="band" id="page-search">
   <div class="wrap">
     <h2>강좌 찾기</h2>
@@ -247,10 +262,14 @@ footer ul{margin:6px 0 0;padding-left:18px}
       <p class="sub">꾸준히 다니면 센터가 이미 하고 있는 등록·체험 이벤트와 연결돼요.</p>
       <div class="list" id="rewardList" style="margin-top:14px"></div>
       <p class="note">기관 협력 시 제공 예정인 혜택이에요(제안). 달성하면 센터 데스크에서 확인 후 받는 방식이에요.</p>
-      <h3 style="margin-top:22px">내 센터 소식</h3>
-      <div class="list" id="newsList" style="margin-top:10px"></div>
-      <h3 style="margin-top:22px">부족한 능력치 키우기</h3>
-      <div class="list" id="recList" style="margin-top:10px"></div>
+      <div class="newsblock-rewards">
+        <h3 style="margin-top:22px">내 센터 소식</h3>
+        <div class="list newsList" style="margin-top:10px"></div>
+      </div>
+      <div class="recblock-rewards">
+        <h3 style="margin-top:22px">부족한 능력치 키우기</h3>
+        <div class="list recList" style="margin-top:10px"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -435,9 +454,10 @@ function recs(n){const xp=statXP(),cs=myCenters(),mine=new Set(state.courses);
   return{weak,list:pool.slice(0,n)}}
 function renderSide(){
   $('rewardList').innerHTML=rewardHTML(rewards());
-  $('newsList').innerHTML=newsHTML(newsFor(4));
+  const newsOut=newsHTML(newsFor(4));document.querySelectorAll('.newsList').forEach(el=>el.innerHTML=newsOut);
   const r=recs(3);
-  $('recList').innerHTML=`<p class="sub" style="margin:0">지금 가장 낮은 능력치는 <b style="color:${SC[r.weak]}">${STATS[r.weak]}</b>이에요.</p>`+(r.list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm add" data-add="${esc(keyOf(c))}">+ 담기</button></div>`).join('')||'<div class="empty">추천할 강좌가 없어요.</div>')+'<p class="note" style="margin:8px 0 0">수강신청은 한국체육산업개발 온라인 수강신청 페이지에서 해요. 신청 후 + 담기를 누르면 출석 체크를 시작할 수 있어요.</p>'}
+  const recHTML=`<p class="sub" style="margin:0">지금 가장 낮은 능력치는 <b style="color:${SC[r.weak]}">${STATS[r.weak]}</b>이에요.</p>`+(r.list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm add" data-add="${esc(keyOf(c))}">+ 담기</button></div>`).join('')||'<div class="empty">추천할 강좌가 없어요.</div>')+'<p class="note" style="margin:8px 0 0">수강신청은 한국체육산업개발 온라인 수강신청 페이지에서 해요. 신청 후 + 담기를 누르면 출석 체크를 시작할 수 있어요.</p>';
+  document.querySelectorAll('.recList').forEach(el=>el.innerHTML=recHTML)}
 function renderAll(){renderHero();renderToday();renderMine();renderSearch();renderBadges();renderSide()}
 
 /* ---- actions ---- */
