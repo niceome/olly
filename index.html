@@ -88,6 +88,11 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 .statpick button{border-radius:99px;min-height:36px;padding:4px 12px;font-size:14px}
 .statpick button[aria-pressed=true]{color:#fff;border-color:transparent;background:#495057}
 .count{font-size:13px;color:var(--mute);margin:6px 0}
+.pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
+.pager .pbtn{min-width:40px;min-height:40px;padding:4px 8px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font:500 14px "Noto Sans KR",sans-serif;cursor:pointer}
+.pager .pbtn:hover:not(:disabled){border-color:var(--field)}
+.pager .pbtn.on{background:var(--field);border-color:var(--field);color:#fff;font-weight:700}
+.pager .pbtn:disabled{opacity:.4;cursor:not-allowed}
 .res .row{grid-template-columns:minmax(0,1fr) auto}
 .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
 .bd{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--card)}
@@ -187,7 +192,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
       </div>
       <div class="count" id="resCount"></div>
       <div class="list res" id="resList"></div>
-      <button class="btn" id="moreBtn" style="margin-top:10px;display:none">더 보기</button>
+      <nav class="pager" id="pager" style="margin-top:12px" aria-label="강좌 페이지"></nav>
     </div>
   </div>
 </section>
@@ -241,7 +246,7 @@ const STATS=['지구력','근력','유연성','민첩성','리듬감','집중력
 const SC=['#1c7ed6','#e8590c','#ae3ec9','#f59f00','#e64980','#0ca678','#868e96'];
 const DAYS='일월화수목금토';
 const KEY='teunteun-v1';
-let COURSES=[],EVENTS=[],state=null,shown=40,statFilter=-1;
+let COURSES=[],EVENTS=[],state=null,page=1,statFilter=-1;const PER=10;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const keyOf=c=>c.slice(0,6).join('|');
@@ -358,10 +363,18 @@ function filtered(){
   return COURSES.filter(c=>(ce===''||c[0]==ce)&&(statFilter<0||c[1]===statFilter)&&(!q||c[2].includes(q)||c[3].includes(q))&&(!adult||!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]+c[2])))}
 function renderSearch(){
   const r=filtered(),mine=new Set(state.courses);
-  $('resCount').textContent=`${r.length.toLocaleString('ko-KR')}개 강좌`;
-  $('resList').innerHTML=r.slice(0,shown).map(c=>{const k=keyOf(c),has=mine.has(k);
+  const pages=Math.max(1,Math.ceil(r.length/PER));
+  page=Math.min(Math.max(1,page),pages);
+  const start=(page-1)*PER;
+  $('resCount').textContent=r.length?`${r.length.toLocaleString('ko-KR')}개 강좌 · ${page}/${pages} 페이지`:'0개 강좌';
+  $('resList').innerHTML=r.slice(start,start+PER).map(c=>{const k=keyOf(c),has=mine.has(k);
     return `<div class="row ${has?'in':''}"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div>${has?`<button class="btn sm added" data-del="${esc(k)}" aria-label="담은 강좌, 누르면 빼기"><span class="lbl">✓ 담은 강좌</span></button>`:`<button class="btn sm add" data-add="${esc(k)}">+ 담기</button>`}</div>`}).join('')||'<div class="empty">조건에 맞는 강좌가 없어요.</div>';
-  $('moreBtn').style.display=r.length>shown?'inline-block':'none'}
+  renderPager(pages)}
+function renderPager(pages){
+  if(pages<=1){$('pager').innerHTML='';return}
+  const startP=Math.floor((page-1)/5)*5+1,endP=Math.min(startP+4,pages);
+  let nums='';for(let p=startP;p<=endP;p++)nums+=`<button class="pbtn${p===page?' on':''}" data-page="${p}"${p===page?' aria-current="page"':''}>${p}</button>`;
+  $('pager').innerHTML=`<button class="pbtn" data-page="${startP-5}"${startP===1?' disabled':''} aria-label="이전 페이지 묶음">‹</button>${nums}<button class="pbtn" data-page="${startP+5}"${endP>=pages?' disabled':''} aria-label="다음 페이지 묶음">›</button>`}
 function renderBadges(){
   const got=BADGES.map(b=>b[2](state));
   $('badgeSum').textContent=`${got.filter(Boolean).length} / ${BADGES.length}개 획득`;
@@ -419,6 +432,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
   if(t.dataset.check)doCheck(t.dataset.check);
   else if(t.dataset.add){if(!state.courses.includes(t.dataset.add)){state.courses.push(t.dataset.add);save();renderAll();toast('내 강좌에 담았어요')}}
   else if(t.dataset.del){state.courses=state.courses.filter(k=>k!==t.dataset.del);save();renderAll();toast('내 강좌에서 뺐어요')}
+  else if(t.dataset.page){page=+t.dataset.page;renderSearch();$('resList').scrollIntoView({block:'start'})}
   else if(t.id==='closeM')$('modal').classList.remove('on')});
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('on')});
@@ -430,9 +444,8 @@ $('demoBtn').onclick=()=>{state=demoState();save();renderAll()};
 $('fCenter').innerHTML='<option value="">전체 센터</option>'+CENTERS.map((c,i)=>`<option value="${i}">${c}</option>`).join('');
 $('fStat').innerHTML=['전체',...STATS.slice(0,6)].map((s,i)=>`<button class="btn" data-stat="${i-1}" aria-pressed="${i===0}" ${i?`style="--c:${SC[i-1]}"`:''}>${s}</button>`).join('');
 $('fStat').addEventListener('click',e=>{const b=e.target.closest('[data-stat]');if(!b)return;statFilter=+b.dataset.stat;
-  for(const x of $('fStat').children){const on=x===b;x.setAttribute('aria-pressed',on);x.style.background=on?(statFilter<0?'var(--ink)':SC[statFilter]):''}shown=40;renderSearch()});
-['fCenter','fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{shown=40;renderSearch()}));
-$('moreBtn').onclick=()=>{shown+=40;renderSearch()};
+  for(const x of $('fStat').children){const on=x===b;x.setAttribute('aria-pressed',on);x.style.background=on?(statFilter<0?'var(--ink)':SC[statFilter]):''}page=1;renderSearch()});
+['fCenter','fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{page=1;renderSearch()}));
 
 /* ---- mobile section tabs: highlight the section in view ---- */
 {const tabs=[...document.querySelectorAll('.tabbar a')],map={};
