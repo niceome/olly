@@ -95,8 +95,9 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 .bd b{display:block;font-size:15px}
 .bd span{font-size:13px;color:var(--mute)}
 .bd.off{opacity:.45}
-.news .row{grid-template-columns:auto minmax(0,1fr) auto}
-.news a{color:var(--acc2);font-size:14px;white-space:nowrap}
+.news .row,.newsList .row{grid-template-columns:auto minmax(0,1fr) auto}
+.news a,.newsList a{color:var(--acc2);font-size:14px;white-space:nowrap}
+.news .tag,.newsList .tag{justify-self:start}
 .rw{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .rw.ok{border-color:var(--acc);box-shadow:inset 4px 0 0 var(--acc)}
 .rw .n{font-weight:700}
@@ -128,7 +129,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
 .toast .gt-bar i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s ease}
 .toast .gt-sub{font-size:12px;opacity:.8}
 @media(max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.hero .wrap{grid-template-areas:"brand" "stage" "path" "panel";gap:14px}.hero{padding-top:clamp(18px,4vw,28px)}.stage{aspect-ratio:1.6/1;max-height:none}.stagebox{max-width:420px;width:100%;margin-inline:auto}}
-@media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) auto}.row .t{grid-column:1/-1;font-size:20px}.news .row{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) auto}.row .t{grid-column:1/-1;font-size:20px}.news .row,.newsList .row{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .apply{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--acc2);text-decoration:none;border:1.5px solid currentColor;border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap;vertical-align:1px}.apply:hover{background:var(--acc2);color:#fff}.apply:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
 .tabbar{display:none}
