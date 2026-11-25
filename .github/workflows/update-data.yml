@@ -4,6 +4,11 @@ on:
   schedule:
     # 매주 월요일 04:17 KST (= 일요일 19:17 UTC)
     - cron: '17 19 * * 0'
+  # data/raw 에 CSV를 올리면 바로 변환 (봇 커밋은 courses.json/events.json 만 바꾸므로 다시 실행되지 않음)
+  push:
+    branches: [main]
+    paths:
+      - 'data/raw/**'
   workflow_dispatch:
     inputs:
       ref:
@@ -13,6 +18,7 @@ on:
 
 permissions:
   contents: write
+  issues: write   # 새 CSV 파일 알림 이슈
 
 concurrency:
   group: update-data
@@ -59,6 +65,12 @@ jobs:
           assert all(len(r) == 7 for r in e), 'events.json 형식 오류'
           print(f'강좌 {len(c)}개, 이벤트 {len(e)}건')
           EOF
+
+      - name: 오픈API 없는 데이터의 새 파일 확인
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/check_new_files.py
 
       - name: 바뀐 내용이 있으면 커밋
         run: |

@@ -168,7 +168,7 @@ def get_rows(ds, key, offline, from_cache=False):
     if from_cache and os.path.exists(cached):
         log(f'  저장된 원본 사용: {os.path.relpath(cached, ROOT)}')
         return json.load(open(cached, encoding='utf-8')), 'cache'
-    if key and not offline and ds.get('id'):
+    if key and not offline and ds.get('id') and ds.get('api', True):
         try:
             rows = fetch_api(ds, key)
             os.makedirs(CACHE, exist_ok=True)
