@@ -305,6 +305,35 @@ button.gstep{cursor:pointer}
 .bubble.on{opacity:1;transform:translate(-50%,0)}
 .minibox .bubble{left:calc(100% + 8px);top:50%;transform:translate(0,-50%);font-size:12px}
 .minibox .bubble.on{transform:translate(0,-50%)}
+/* loading skeleton */
+.skel{border-radius:14px;background:linear-gradient(90deg,var(--soft) 25%,color-mix(in srgb,var(--line) 80%,var(--soft)) 50%,var(--soft) 75%);background-size:200% 100%;animation:skel 1.2s linear infinite}
+@keyframes skel{to{background-position:-200% 0}}
+/* checked-in card */
+.row.done{background:color-mix(in srgb,var(--field) 8%,var(--card));border-color:color-mix(in srgb,var(--field) 45%,var(--line))}
+.donebadge{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--field);font-size:15px;white-space:nowrap}
+.donebadge svg{width:24px;height:24px;fill:var(--field);stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.donebadge svg circle{stroke:none}
+.row.pop{animation:donepop .8s ease}
+.row.pop .donebadge{animation:checkin .5s ease .1s both}
+@keyframes donepop{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--field) 55%,transparent)}35%{transform:scale(1.02)}100%{transform:scale(1);box-shadow:0 0 0 16px transparent}}
+@keyframes checkin{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.2);opacity:1}100%{transform:scale(1)}}
+/* wide screens: home in two columns */
+body:not([data-view=home]) .homegrid{display:none}
+@media(min-width:1024px){
+ .homegrid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:start;max-width:calc(1180px + 10vw);margin:0 auto;padding-right:max(5vw,16px)}
+ .homegrid #sec-today{padding-right:28px}
+ .homeside{display:grid;gap:16px;padding-block:clamp(24px,4vw,52px)}
+ .homeside .band{background:var(--soft);border-radius:18px;padding:20px}
+ .homeside h2{font-size:22px}
+}
+/* first-visit guide */
+.tour-ring{position:fixed;z-index:20;border-radius:14px;box-shadow:0 0 0 3px var(--acc),0 0 0 9999px rgba(0,0,0,.5);pointer-events:none;transition:left .2s,top .2s,width .2s,height .2s}
+.tour-tip{position:fixed;z-index:21;background:var(--card);color:var(--ink);border-radius:16px;padding:14px 16px;box-shadow:0 12px 32px rgba(0,0,0,.3)}
+.tt-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.tt-h b{font-family:Jua,sans-serif;font-weight:400;font-size:19px;color:var(--field)}
+.tt-h span{font-size:12px;color:var(--mute)}
+.tour-tip p{margin:6px 0 12px;font-size:14px;line-height:1.5}
+.tt-b{display:flex;justify-content:space-between;align-items:center}
 </style>
 </head>
 <body data-view="home">
@@ -315,6 +344,7 @@ button.gstep{cursor:pointer}
       <button class="dbtn main" id="nextBtn">다음 수업 시간으로</button>
       <button class="dbtn" id="resetBtn">새로 시작</button>
       <button class="dbtn" id="demoBtn">예시 다시 보기</button>
+      <button class="dbtn" id="tourBtn">사용법</button>
       <details class="dtime"><summary>시각 직접 정하기</summary><label for="simdt" class="sr">시연용 시각</label><input type="datetime-local" id="simdt"><button class="dbtn" id="nowBtn">지금</button></details>
     </div>
   </div>
@@ -361,14 +391,33 @@ button.gstep{cursor:pointer}
 </header>
 
 <main>
+<div class="homegrid">
 <section class="band" id="sec-today">
   <div class="wrap">
     <h2>오늘 수업</h2><p class="sub" id="todayDate"></p>
-    <div class="list" id="todayList" style="margin-top:14px"></div>
+    <div class="list" id="todayList" style="margin-top:14px" aria-busy="true"><div class="skel" style="height:150px"></div><div class="skel" style="height:64px"></div></div>
     <div class="week" id="week"></div>
     <p class="note">출석 체크는 수업 시작 30분 전부터 끝난 뒤 30분까지, 하루 한 번만 열려요. 종일 이용(헬스 등)은 운영 시간 안에서 열려요.</p>
   </div>
 </section>
+
+<div class="homeside">
+<section class="band" id="sec-news">
+  <div class="wrap">
+    <h2>내 센터 소식</h2>
+    <div class="list newsList" style="margin-top:12px"><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div></div>
+  </div>
+</section>
+
+<section class="band soft" id="sec-grow">
+  <div class="wrap">
+    <h2>부족한 능력치 키우기</h2>
+    <div class="list recList" style="margin-top:12px"><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div></div>
+  </div>
+</section>
+
+</div>
+</div>
 
 <section class="band soft" id="sec-courses">
   <div class="wrap">
@@ -381,20 +430,6 @@ button.gstep{cursor:pointer}
       <div class="list" id="myList"></div>
     </div>
     <div id="mineEmpty"></div>
-  </div>
-</section>
-
-<section class="band" id="sec-news">
-  <div class="wrap">
-    <h2>내 센터 소식</h2>
-    <div class="list newsList" style="margin-top:12px"></div>
-  </div>
-</section>
-
-<section class="band soft" id="sec-grow">
-  <div class="wrap">
-    <h2>부족한 능력치 키우기</h2>
-    <div class="list recList" style="margin-top:12px"></div>
   </div>
 </section>
 
@@ -411,7 +446,7 @@ button.gstep{cursor:pointer}
       <div class="fbottom"><label><input type="checkbox" id="fAdult" checked style="min-height:auto"> 성인 강좌만</label><button class="linkbtn" id="fReset">필터 초기화</button></div>
     </div>
     <div class="count" id="resCount"></div>
-    <div class="list res" id="resList"></div>
+    <div class="list res" id="resList"><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div></div>
     <nav class="pager" id="pager" style="margin-top:12px" aria-label="강좌 페이지"></nav>
   </div>
 </section>
@@ -649,13 +684,13 @@ function renderToday(){
   const items=list.map(c=>{const k=keyOf(c),[ws,we]=windowOf(c),done=checkedToday(k,now),open=!done&&m>=ws&&m<=we,past=!done&&m>we;
     const st=done?'오늘 출석 체크 완료':m<ws?`${hm(ws)}부터 출석 체크`:past?'출석 체크 시간이 지났어요':'지금 출석 체크할 수 있어요';return{c,k,ws,done,open,past,st}});
   const fi=items.findIndex(x=>!x.done&&!x.past);
-  const row=({c,k,done,open,st})=>`<div class="row"><div class="t">${esc(c[4].split('-')[0])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(CENTERS[c[0]])} · ${esc(c[4])} · ${esc(STATS[c[1]])} +10</div></div><div style="display:grid;justify-items:end;gap:6px"><button class="btn go" data-check="${esc(k)}" ${open?'':'disabled'}>${done?'완료':'출석 체크'}</button><div class="state">${esc(st)}</div></div></div>`;
+  const row=({c,k,done,open,st})=>`<div class="row ${done?'done':''} ${done&&k===justChecked?'pop':''}"><div class="t">${esc(c[4].split('-')[0])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(CENTERS[c[0]])} · ${esc(c[4])} · ${esc(STATS[c[1]])} +10</div></div><div style="display:grid;justify-items:end;gap:6px">${done?`<span class="donebadge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9"/></svg>출석 완료</span>`:`<button class="btn go" data-check="${esc(k)}" ${open?'':'disabled'}>출석 체크</button><div class="state">${esc(st)}</div>`}</div></div>`;
   let html='';
   if(fi>=0){const{c,k,ws,open}=items[fi];
     html+=`<div class="focus ${open?'open':''}"><div class="fk">${open?'지금 출석 체크할 수 있어요':'다음 수업'}</div><div class="ft">${esc(c[4])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="fn">${esc(c[3])}</span></div><div class="m" style="font-size:13px;color:var(--mute)">${esc(CENTERS[c[0]])} · ${esc(STATS[c[1]])} +10</div><button class="btn go big" data-check="${esc(k)}" ${open?'':'disabled'}>${open?'출석 체크':`${hm(ws)}부터 출석 체크할 수 있어요`}</button></div>`;
     const rest=items.filter((_,i)=>i!==fi);if(rest.length)html+=`<p class="subh">오늘의 다른 수업</p>`+rest.map(row).join('')}
   else html=`<div class="empty">${items.some(x=>x.done)?'오늘 수업을 모두 마쳤어요. 수고했어요!':'오늘 수업의 출석 체크 시간이 지났어요. 다음 수업에서 만나요.'}</div>`+items.map(row).join('');
-  $('todayList').innerHTML=html}
+  $('todayList').innerHTML=html;$('todayList').removeAttribute('aria-busy')}
 function renderWeek(){
   const now=simNow(),mon=new Date(now);mon.setHours(0,0,0,0);mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
   const sched=new Set();state.courses.map(findCourse).filter(Boolean).forEach(c=>daySet(c[5]).forEach(d=>sched.add(d)));
@@ -720,10 +755,11 @@ function confirmRemove(k){
   $('modal').classList.add('on');$('cancelM').focus();
   $('cancelM').onclick=()=>$('modal').classList.remove('on');
   $('confirmDel').onclick=()=>{state.courses=state.courses.filter(x=>x!==k);save();renderAll();$('modal').classList.remove('on');toast('내 강좌에서 뺐어요')}}
+let justChecked='';
 function doCheck(k){
   const c=findCourse(k),now=simNow();if(!c||checkedToday(k,now))return;
   const tierBefore=tierOf(statLv(statXP()[c[1]])),okBefore=new Set(rewards().filter(r=>r.ok).map(r=>r.id)),before=levelOf(totalXP()).lv,bonus=streakWeeks(now)>=2?5:0,xp=10+bonus;
-  state.log.push({k,d:ymd(now),s:c[1],sp:c[2],xp,m:parseTime(c[4])[0]});save();
+  state.log.push({k,d:ymd(now),s:c[1],sp:c[2],xp,m:parseTime(c[4])[0]});save();justChecked=k;setTimeout(()=>{justChecked=''},1500);
   const after=levelOf(totalXP()).lv;renderAll();
   const tierAfter=tierOf(statLv(statXP()[c[1]]));if(tierAfter>tierBefore&&state.pick){delete state.pick[c[1]];save();renderHero()}
   const gNew=tierAfter>tierBefore?GEAR[c[1]][tierAfter-1]:'',gearMsg=gNew?`새 장비 ${gNew}${eulReul(gNew)} 착용했어요!`:'';
@@ -754,7 +790,37 @@ function demoState(){
     cs.forEach((c,i)=>{if(daySet(c[5]).has(d.getDay())&&(back*7+i*3)%5<2)s.log.push({k:keyOf(c),d:ymd(d),s:c[1],sp:c[2],xp:10,m:parseTime(c[4])[0]})})}
   return s}
 
+/* ---- first-visit guide: 3 steps ---- */
+const TOUR_KEY='olly-tour-v1';
+const TOUR=[
+ {t:()=>$('nextBtn'),h:'① 수업 시간으로 이동',b:'체험용 버튼이에요. <b>다음 수업 시간으로</b>를 누르면 담긴 수업 시간으로 바로 이동해요.'},
+ {t:()=>$('todayList').querySelector('.focus .btn.go:not([disabled])')||$('todayList').querySelector('.focus')||$('todayList'),h:'② 출석 체크',b:'수업 시간에는 <b>출석 체크</b> 버튼이 켜져요. 눌러서 경험치를 받아 보세요.'},
+ {t:()=>$('sec-me'),h:'③ 캐릭터 성장',b:'출석할수록 올리가 자라고 장비를 얻어요. <b>자세히</b>와 가방 버튼으로 능력치와 장비를 볼 수 있어요.'}];
+let tourStep=-1;
+function tourStart(){goView('home');tourStep=0;tourShow()}
+function tourEnd(){tourStep=-1;document.querySelectorAll('.tour-ring,.tour-tip').forEach(n=>n.remove());try{localStorage.setItem(TOUR_KEY,'1')}catch(e){}}
+function tourShow(){
+  document.querySelectorAll('.tour-ring,.tour-tip').forEach(n=>n.remove());if(tourStep<0)return;
+  if($('modal').classList.contains('on')){setTimeout(tourShow,400);return}
+  const s=TOUR[tourStep],el=s.t();if(!el){tourEnd();return}
+  el.scrollIntoView({block:'center'});
+  const ring=document.createElement('div');ring.className='tour-ring';
+  const tip=document.createElement('div');tip.className='tour-tip';tip.setAttribute('role','dialog');tip.setAttribute('aria-label','사용 안내');
+  tip.innerHTML=`<div class="tt-h"><b>${s.h}</b><span>${tourStep+1} / ${TOUR.length}</span></div><p>${s.b}</p><div class="tt-b"><button class="linkbtn" data-tour="skip">건너뛰기</button><button class="btn sm go" data-tour="next">${tourStep===TOUR.length-1?'시작하기':'다음'}</button></div>`;
+  document.body.append(ring,tip);tourPlace();tip.querySelector('[data-tour=next]').focus({preventScroll:true})}
+function tourPlace(){
+  const ring=document.querySelector('.tour-ring'),tip=document.querySelector('.tour-tip');if(!ring||tourStep<0)return;
+  const el=TOUR[tourStep].t();if(!el)return;const r=el.getBoundingClientRect(),p=6;
+  Object.assign(ring.style,{left:r.left-p+'px',top:r.top-p+'px',width:r.width+p*2+'px',height:r.height+p*2+'px'});
+  const tw=Math.min(300,innerWidth-24),below=r.bottom+18+tip.offsetHeight<innerHeight-80;
+  tip.style.width=tw+'px';tip.style.left=Math.max(12,Math.min(r.left,innerWidth-tw-12))+'px';
+  tip.style.top=(below?r.bottom+14:Math.max(12,r.top-tip.offsetHeight-14))+'px'}
+addEventListener('scroll',tourPlace,{passive:true});addEventListener('resize',tourPlace);
+
 document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.tour){if(t.dataset.tour==='skip')tourEnd();else{tourStep++;if(tourStep>=TOUR.length)tourEnd();else tourShow()}return}
+  if(tourStep===0&&t.id==='nextBtn')setTimeout(()=>{tourStep=1;tourShow()},300);
+  else if(tourStep===1&&t.dataset.check)setTimeout(()=>{tourStep=2;tourShow()},1200);
   if(t.dataset.check)doCheck(t.dataset.check);
   else if(t.dataset.add){if(!state.courses.includes(t.dataset.add)){state.courses.push(t.dataset.add);save();renderAll();toast('내 강좌에 담았어요')}}
   else if(t.dataset.delc)confirmRemove(t.dataset.delc);
@@ -769,7 +835,8 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
   else if(t.id==='meToggle'){const open=t.getAttribute('aria-expanded')!=='true';t.setAttribute('aria-expanded',open);$('meDetail').hidden=!open;t.textContent=open?'접기 ▴':'자세히 ▾'}
   else if(t.id==='closeM')$('modal').classList.remove('on')});
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('on')});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('modal').classList.remove('on');closeGear()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('modal').classList.remove('on');closeGear();if(tourStep>=0)tourEnd()}});
+$('tourBtn').onclick=()=>tourStart();
 document.addEventListener('click',e=>{if(e.target.isConnected&&!e.target.closest('.charbox'))closeGear();const ch=e.target.closest('.stage,.mini');if(ch&&state)pokeChar(ch.parentElement)});
 $('nowBtn').onclick=()=>setSim(new Date());
 $('nextBtn').onclick=()=>{const t=nextSlot();if(t)setSim(t);else toast('이번 주에 남은 수업이 없어요')};
@@ -804,6 +871,8 @@ Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').th
   $('fCourses').textContent=c.length.toLocaleString('ko-KR');$('fEvents').textContent=ev.length.toLocaleString('ko-KR');
   const latest=ev.reduce((m,e)=>e[4]>m?e[4]:m,'');if(latest)$('fEventLatest').textContent=`, 최근 글 ${latest}`;
   setSimInit();state=load()||demoState();save();renderAll();
+  let seen=false;try{seen=!!localStorage.getItem(TOUR_KEY)}catch(e){}
+  if(!seen)setTimeout(tourStart,700);
 }).catch(()=>{$('todayList').innerHTML='<div class="empty">강좌 데이터를 불러오지 못했어요. 새로고침해 주세요.</div>'});
 function setSimInit(){const d=new Date();$('simdt').value=`${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
 }
