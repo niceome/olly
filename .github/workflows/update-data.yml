@@ -1,0 +1,64 @@
+name: 공공데이터 자동 갱신
+
+on:
+  schedule:
+    # 매주 월요일 04:17 KST (= 일요일 19:17 UTC)
+    - cron: '17 19 * * 0'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: '운영 중 판단 기준일 (YYYY-MM-DD, 비우면 오늘)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 데이터 받아서 변환
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          REF_DATE: ${{ github.event.inputs.ref }}
+        run: |
+          if [ -n "$REF_DATE" ]; then
+            python3 scripts/build_data.py --ref "$REF_DATE"
+          else
+            python3 scripts/build_data.py
+          fi
+
+      - name: JSON 검증
+        run: |
+          python3 - <<'EOF'
+          import json
+          c = json.load(open('courses.json', encoding='utf-8'))
+          e = json.load(open('events.json', encoding='utf-8'))
+          assert c and all(len(r) == 9 for r in c), 'courses.json 형식 오류'
+          assert all(len(r) == 7 for r in e), 'events.json 형식 오류'
+          print(f'강좌 {len(c)}개, 이벤트 {len(e)}건')
+          EOF
+
+      - name: 바뀐 내용이 있으면 커밋
+        run: |
+          if git diff --quiet -- courses.json events.json; then
+            echo "바뀐 데이터 없음"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add courses.json events.json
+          git commit -m "chore: 데이터 자동 갱신 $(TZ=Asia/Seoul date +%F)"
+          git push

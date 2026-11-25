@@ -98,7 +98,7 @@
 ├── data/raw/                        예비용 원본 CSV
 ├── .github/workflows/
 │   └── update-data.yml              자동 갱신 설정
-└── 자동갱신_설정방법.md
+└── auto_update.md                   자동 갱신 설정 방법
 ```
 
 ## 직접 실행하기
