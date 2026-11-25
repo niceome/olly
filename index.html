@@ -374,7 +374,7 @@ function renderToday(){
     return `<div class="row"><div class="t">${esc(c[4].split('-')[0])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(CENTERS[c[0]])} · ${esc(c[4])} · ${esc(STATS[c[1]])} +10</div></div><div><button class="btn go" data-check="${esc(k)}" ${open?'':'disabled'}>${done?'완료':'출석 체크'}</button><div class="state">${esc(st)}</div></div></div>`}).join('')}
 function renderMine(){
   const list=state.courses.map(findCourse).filter(Boolean);
-  $('myList').innerHTML=list.length?list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm" data-del="${esc(keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join(''):'<div class="empty">담은 강좌가 없어요.</div>'}
+  $('myList').innerHTML=list.length?list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm" data-delc="${esc(keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join(''):'<div class="empty">담은 강좌가 없어요.</div>'}
 function filtered(){
   const ce=$('fCenter').value,q=$('fQ').value.trim(),adult=$('fAdult').checked;
   return COURSES.filter(c=>(ce===''||c[0]==ce)&&(statFilter<0||c[1]===statFilter)&&(!q||c[2].includes(q)||c[3].includes(q))&&(!adult||!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]+c[2])))}
@@ -413,6 +413,12 @@ function renderSide(){
 function renderAll(){renderHero();renderToday();renderMine();renderSearch();renderBadges();renderSide()}
 
 /* ---- actions ---- */
+function confirmRemove(k){
+  const c=findCourse(k),nm=c?`${c[2]} · ${c[3]}`:'이 강좌';
+  $('dlg').innerHTML=`<h2 id="mTitle" style="color:var(--acc2)">강좌를 뺄까요?</h2><p class="sub"><b>${esc(nm)}</b>를 내 강좌에서 빼요. 지금까지의 출석 기록과 경험치는 그대로 남아요.</p><div style="display:flex;gap:10px;margin-top:20px"><button class="btn" id="cancelM" style="flex:1" autofocus>취소</button><button class="btn go" id="confirmDel" style="flex:1">빼기</button></div>`;
+  $('modal').classList.add('on');$('cancelM').focus();
+  $('cancelM').onclick=()=>$('modal').classList.remove('on');
+  $('confirmDel').onclick=()=>{state.courses=state.courses.filter(x=>x!==k);save();renderAll();$('modal').classList.remove('on');toast('내 강좌에서 뺐어요')}}
 function doCheck(k){
   const c=findCourse(k),now=simNow();if(!c||checkedToday(k,now))return;
   const okBefore=new Set(rewards().filter(r=>r.ok).map(r=>r.id)),before=levelOf(totalXP()).lv,bonus=streakWeeks(now)>=2?5:0,xp=10+bonus;
@@ -448,6 +454,7 @@ function demoState(){
 document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
   if(t.dataset.check)doCheck(t.dataset.check);
   else if(t.dataset.add){if(!state.courses.includes(t.dataset.add)){state.courses.push(t.dataset.add);save();renderAll();toast('내 강좌에 담았어요')}}
+  else if(t.dataset.delc)confirmRemove(t.dataset.delc);
   else if(t.dataset.del){state.courses=state.courses.filter(k=>k!==t.dataset.del);save();renderAll();toast('내 강좌에서 뺐어요')}
   else if(t.dataset.page){page=+t.dataset.page;renderSearch();$('resList').scrollIntoView({block:'start'})}
   else if(t.id==='closeM')$('modal').classList.remove('on')});
