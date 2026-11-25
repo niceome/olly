@@ -1,757 +1,124 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>올리</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-      href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap"
-      rel="stylesheet">
-  <style>
-    :root {
-      color-scheme: light dark;
-      --bg: light-dark(#ffffff, #0f1712);
-      --ink: light-dark(#14231a, #e8f1ea);
-      --mute: light-dark(#5d6f63, #9db2a3);
-      --field: light-dark(#2f9e44, #1b5e2a);
-      --fieldink: #ffffff;
-      --card: light-dark(#ffffff, #16211a);
-      --line: light-dark(#dfe8e1, #2a3a2f);
-      --soft: light-dark(#f1f7f2, #1a271e);
-      --acc: #ff5a3c;
-      --acc2: light-dark(#d9480f, #ff8a6b)
-    }
-
-    :root[data-theme=light] {
-      color-scheme: light
-    }
-
-    :root[data-theme=dark] {
-      color-scheme: dark
-    }
-
-    * {
-      box-sizing: border-box;
-      min-width: 0
-    }
-
-    html, body {
-      margin: 0
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--ink);
-      font: 16px/1.55 "Noto Sans KR", system-ui, sans-serif;
-      overflow-x: clip
-    }
-
-    h1, h2, h3 {
-      font-family: Jua, "Noto Sans KR", sans-serif;
-      font-weight: 400;
-      letter-spacing: -.01em;
-      line-height: 1.1;
-      margin: 0
-    }
-
-    h2 {
-      font-size: 28px
-    }
-
-    h3 {
-      font-size: 20px
-    }
-
-    .band {
-      padding: clamp(24px, 4vw, 52px) max(5vw, 16px)
-    }
-
-    .wrap {
-      max-width: 1180px;
-      margin: 0 auto
-    }
-
-    .hero {
-      background: var(--field);
-      color: var(--fieldink)
-    }
-
-    .hero .wrap {
-      display: grid;
-      grid-template-columns:minmax(0, 1.1fr) minmax(0, 1fr);
-      gap: 28px;
-      align-items: center
-    }
-
-    .brand {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      flex-wrap: wrap
-    }
-
-    .brand h1 {
-      font-size: clamp(34px, 5vw, 48px)
-    }
-
-    .brand span {
-      opacity: .9
-    }
-
-    .stage {
-      position: relative;
-      aspect-ratio: 1.15/1;
-      max-height: 400px;
-      width: 100%
-    }
-
-    .stage svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%
-    }
-
-    .panel {
-      background: rgba(255, 255, 255, .12);
-      border-radius: 18px;
-      padding: 18px
-    }
-
-    .lv {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      flex-wrap: wrap
-    }
-
-    .lv b {
-      font-family: Jua, sans-serif;
-      font-weight: 400;
-      font-size: clamp(44px, 7vw, 64px);
-      line-height: 1
-    }
-
-    .xpbar {
-      height: 14px;
-      border-radius: 9px;
-      background: rgba(0, 0, 0, .22);
-      overflow: hidden;
-      margin: 10px 0 4px
-    }
-
-    .xpbar i {
-      display: block;
-      height: 100%;
-      background: #fff;
-      border-radius: 9px;
-      transition: width .6s
-    }
-
-    .chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 12px 0 4px
-    }
-
-    .chip {
-      background: rgba(255, 255, 255, .18);
-      border-radius: 99px;
-      padding: 4px 12px;
-      font-size: 14px;
-      white-space: nowrap
-    }
-
-    .stats {
-      display: grid;
-      gap: 8px;
-      margin-top: 14px
-    }
-
-    .st {
-      display: grid;
-      grid-template-columns:4.5em minmax(0, 1fr) 3em 7.6em;
-      gap: 10px;
-      align-items: center;
-      font-size: 14px
-    }
-
-    .st small {
-      font-size: 13px;
-      opacity: .75;
-      white-space: nowrap
-    }
-
-    .st small.got {
-      opacity: 1;
-      font-weight: 700
-    }
-
-    .path {
-      list-style: none;
-      display: grid;
-      grid-template-columns:repeat(5, minmax(0, 1fr));
-      gap: 6px;
-      margin: 6px 0 0;
-      padding: 0;
-      counter-reset: p
-    }
-
-    .path li {
-      background: rgba(0, 0, 0, .18);
-      border-radius: 10px;
-      padding: 6px 4px;
-      text-align: center;
-      font-size: 13px;
-      line-height: 1.25
-    }
-
-    .path li b {
-      display: block;
-      font-weight: 700;
-      font-size: 14px
-    }
-
-    .path li.done {
-      background: rgba(255, 255, 255, .28)
-    }
-
-    .path li.now {
-      background: #fff;
-      color: var(--field)
-    }
-
-    .stage.hop svg {
-      animation: hop .6s
-    }
-
-    @keyframes hop {
-      30% {
-        transform: translateY(-14px)
-      }
-      60% {
-        transform: translateY(0)
-      }
-      80% {
-        transform: translateY(-4px)
-      }
-    }
-
-    .st .bar {
-      height: 10px;
-      background: rgba(0, 0, 0, .22);
-      border-radius: 6px;
-      overflow: hidden
-    }
-
-    .st .bar i {
-      display: block;
-      height: 100%;
-      border-radius: 6px
-    }
-
-    .st em {
-      font-style: normal;
-      text-align: right;
-      white-space: nowrap
-    }
-
-    .sample {
-      font-size: 13px;
-      opacity: .9;
-      margin-top: 12px
-    }
-
-    .sample button {
-      background: none;
-      border: 0;
-      color: inherit;
-      text-decoration: underline;
-      font: inherit;
-      cursor: pointer;
-      padding: 0 4px
-    }
-
-    .today {
-      display: grid;
-      grid-template-columns:minmax(0, 1fr) auto;
-      gap: 20px;
-      align-items: end;
-      margin-bottom: 16px
-    }
-
-    .sim {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center
-    }
-
-    .sim label {
-      font-size: 14px;
-      color: var(--mute)
-    }
-
-    input, select {
-      font: 16px "Noto Sans KR", sans-serif;
-      color: var(--ink);
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 9px 12px;
-      min-height: 44px
-    }
-
-    input:focus-visible, select:focus-visible, button:focus-visible {
-      outline: 3px solid var(--acc);
-      outline-offset: 2px
-    }
-
-    .btn {
-      font: 500 15px "Noto Sans KR", sans-serif;
-      border-radius: 10px;
-      min-height: 44px;
-      padding: 8px 16px;
-      border: 1px solid var(--line);
-      background: var(--card);
-      color: var(--ink);
-      cursor: pointer;
-      white-space: nowrap
-    }
-
-    .btn:hover {
-      border-color: var(--field)
-    }
-
-    .btn.go {
-      background: var(--acc);
-      border-color: var(--acc);
-      color: #fff;
-      font-weight: 700
-    }
-
-    .btn.go:disabled {
-      background: var(--soft);
-      border-color: var(--line);
-      color: var(--mute);
-      cursor: not-allowed
-    }
-
-    .btn.sm {
-      min-height: 36px;
-      padding: 4px 12px;
-      font-size: 14px
-    }
-
-    .btn.add {
-      border: 2px solid var(--field);
-      color: var(--field);
-      font-weight: 700;
-      background: var(--card);
-      min-width: 6.5em
-    }
-
-    .btn.add:hover {
-      background: color-mix(in srgb, var(--field) 12%, var(--card))
-    }
-
-    .inwrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end
-    }
-
-    .inlbl {
-      font-size: 14px;
-      font-weight: 700;
-      color: light-dark(#2b8a3e, #69db7c);
-      white-space: nowrap
-    }
-
-    .sim[hidden] {
-      display: none
-    }
-
-    .linkbtn {
-      background: none;
-      border: 0;
-      color: inherit;
-      text-decoration: underline;
-      font: inherit;
-      cursor: pointer;
-      padding: 4px 0
-    }
-
-    .row.in {
-      border-color: var(--field);
-      box-shadow: inset 4px 0 0 var(--field)
-    }
-
-    .list {
-      display: grid;
-      gap: 10px
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns:auto minmax(0, 1fr) auto;
-      gap: 14px;
-      align-items: center;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px 14px
-    }
-
-    .row .t {
-      font-family: Jua, sans-serif;
-      font-size: 22px;
-      white-space: nowrap;
-      min-width: 4.3em
-    }
-
-    .row .n {
-      font-weight: 500;
-      overflow-wrap: anywhere
-    }
-
-    .row .m {
-      font-size: 13px;
-      color: var(--mute)
-    }
-
-    .tag {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
-      border-radius: 6px;
-      padding: 1px 7px;
-      margin-right: 6px;
-      color: #fff;
-      white-space: nowrap
-    }
-
-    .state {
-      font-size: 13px;
-      color: var(--mute);
-      text-align: right
-    }
-
-    .empty {
-      background: var(--soft);
-      border-radius: 14px;
-      padding: 18px;
-      color: var(--mute)
-    }
-
-    .two {
-      display: grid;
-      grid-template-columns:minmax(0, 1fr) minmax(0, 1.2fr);
-      gap: 28px;
-      align-items: start
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
-      gap: 8px;
-      margin: 12px 0
-    }
-
-    .filters .full {
-      grid-column: 1/-1
-    }
-
-    .statpick {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap
-    }
-
-    .statpick button {
-      border-radius: 99px;
-      min-height: 36px;
-      padding: 4px 12px;
-      font-size: 14px
-    }
-
-    .statpick button[aria-pressed=true] {
-      color: #fff;
-      border-color: transparent;
-      background: #495057
-    }
-
-    .count {
-      font-size: 13px;
-      color: var(--mute);
-      margin: 6px 0
-    }
-
-    .res .row {
-      grid-template-columns:minmax(0, 1fr) auto
-    }
-
-    .badges {
-      display: grid;
-      grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
-      margin-top: 12px
-    }
-
-    .bd {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      background: var(--card)
-    }
-
-    .bd svg {
-      width: 40px;
-      height: 40px;
-      display: block;
-      margin-bottom: 6px
-    }
-
-    .bd b {
-      display: block;
-      font-size: 15px
-    }
-
-    .bd span {
-      font-size: 13px;
-      color: var(--mute)
-    }
-
-    .bd.off {
-      opacity: .45
-    }
-
-    .news .row {
-      grid-template-columns:auto minmax(0, 1fr) auto
-    }
-
-    .news a {
-      color: var(--acc2);
-      font-size: 14px;
-      white-space: nowrap
-    }
-
-    .rw {
-      display: grid;
-      grid-template-columns:minmax(0, 1fr) auto;
-      gap: 6px 14px;
-      align-items: center;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px 14px
-    }
-
-    .rw.ok {
-      border-color: var(--acc);
-      box-shadow: inset 4px 0 0 var(--acc)
-    }
-
-    .rw .n {
-      font-weight: 700
-    }
-
-    .rw .m {
-      font-size: 13px;
-      color: var(--mute)
-    }
-
-    .rw .pb {
-      grid-column: 1/-1;
-      height: 8px;
-      background: var(--soft);
-      border-radius: 5px;
-      overflow: hidden
-    }
-
-    .rw .pb i {
-      display: block;
-      height: 100%;
-      background: var(--field);
-      border-radius: 5px
-    }
-
-    .rw.ok .pb i {
-      background: var(--acc)
-    }
-
-    .rw .pv {
-      font-size: 13px;
-      color: var(--mute);
-      white-space: nowrap;
-      text-align: right
-    }
-
-    .rw.ok .pv {
-      color: var(--acc2);
-      font-weight: 700
-    }
-
-    .note {
-      font-size: 13px;
-      color: var(--mute);
-      margin: 8px 0 0
-    }
-
-    .date {
-      font-size: 13px;
-      color: var(--mute);
-      white-space: nowrap
-    }
-
-    .sub {
-      color: var(--mute);
-      margin: 6px 0 0
-    }
-
-    .soft {
-      background: var(--soft)
-    }
-
-    footer {
-      font-size: 13px;
-      color: var(--mute)
-    }
-
-    footer ul {
-      margin: 6px 0 0;
-      padding-left: 18px
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .45);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 9
-    }
-
-    .modal.on {
-      display: flex
-    }
-
-    .dlg {
-      background: var(--card);
-      color: var(--ink);
-      border-radius: 20px;
-      max-width: 520px;
-      width: 100%;
-      padding: 24px;
-      max-height: 90vh;
-      overflow: auto
-    }
-
-    .dlg h2 {
-      color: var(--field)
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 20px;
-      transform: translateX(-50%);
-      background: var(--ink);
-      color: var(--bg);
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-size: 15px;
-      opacity: 0;
-      transition: opacity .3s;
-      pointer-events: none;
-      z-index: 10
-    }
-
-    .toast.on {
-      opacity: 1;
-      pointer-events: auto
-    }
-
-    .toast button {
-      background: none;
-      border: 0;
-      color: var(--acc);
-      font: inherit;
-      font-weight: 700;
-      text-decoration: underline;
-      cursor: pointer;
-      margin-left: 12px;
-      padding: 4px
-    }
-
-    @media (max-width: 860px) {
-      .hero .wrap, .two {
-        grid-template-columns:minmax(0, 1fr)
-      }
-
-      .today {
-        grid-template-columns:minmax(0, 1fr)
-      }
-    }
-
-    @media (max-width: 600px) {
-      .row {
-        grid-template-columns:minmax(0, 1fr) auto
-      }
-
-      .row .t {
-        grid-column: 1/-1;
-        font-size: 20px
-      }
-
-      .news .row {
-        grid-template-columns:minmax(0, 1fr)
-      }
-
-      .filters {
-        grid-template-columns:minmax(0, 1fr)
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        transition: none !important;
-        animation: none !important
-      }
-    }
-
-    .apply {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--acc2);
-      text-decoration: none;
-      border: 1.5px solid currentColor;
-      border-radius: 999px;
-      padding: 1px 9px;
-      margin-left: 6px;
-      white-space: nowrap;
-      vertical-align: 1px
-    }
-
-    .apply:hover {
-      background: var(--acc2);
-      color: #fff
-    }
-
-    .apply:focus-visible {
-      outline: 3px solid var(--acc2);
-      outline-offset: 2px
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>올리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday habit tool, warm and encouraging, clear working parts
+   IDEA a pet you raise at the sports centre: every class you attend makes it grow and earn real sports gear
+   PICTURE the character itself, five visible life stages, one piece of gear per stat, a stage path under it
+   COLOUR leaf green field, white cards, coral accent for the check button, six stat hues
+   TYPE Jua display + Noto Sans KR text
+   LAYOUT laptop: tree left, level and stats right in a green band, then today's classes, then my classes and search side by side; phone: stacked */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1712);--ink:light-dark(#14231a,#e8f1ea);--mute:light-dark(#5d6f63,#9db2a3);--field:light-dark(#2f9e44,#1b5e2a);--fieldink:#ffffff;--card:light-dark(#ffffff,#16211a);--line:light-dark(#dfe8e1,#2a3a2f);--soft:light-dark(#f1f7f2,#1a271e);--acc:#ff5a3c;--acc2:light-dark(#d9480f,#ff8a6b)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Jua,"Noto Sans KR",sans-serif;font-weight:400;letter-spacing:-.01em;line-height:1.1;margin:0}
+h2{font-size:28px}h3{font-size:20px}
+.band{padding:clamp(24px,4vw,52px) max(5vw,16px)}
+.wrap{max-width:1180px;margin:0 auto}
+.hero{background:var(--field);color:var(--fieldink)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:center}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{font-size:clamp(34px,5vw,48px)}
+.brand span{opacity:.9}
+.stage{position:relative;aspect-ratio:1.15/1;max-height:400px;width:100%}
+.stage svg{position:absolute;inset:0;width:100%;height:100%}
+.panel{background:rgba(255,255,255,.12);border-radius:18px;padding:18px}
+.lv{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.lv b{font-family:Jua,sans-serif;font-weight:400;font-size:clamp(44px,7vw,64px);line-height:1}
+.xpbar{height:14px;border-radius:9px;background:rgba(0,0,0,.22);overflow:hidden;margin:10px 0 4px}
+.xpbar i{display:block;height:100%;background:#fff;border-radius:9px;transition:width .6s}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.chip{background:rgba(255,255,255,.18);border-radius:99px;padding:4px 12px;font-size:14px;white-space:nowrap}
+.stats{display:grid;gap:8px;margin-top:14px}
+.st{display:grid;grid-template-columns:4.5em minmax(0,1fr) 3em 7.6em;gap:10px;align-items:center;font-size:14px}
+.st small{font-size:13px;opacity:.75;white-space:nowrap}
+.st small.got{opacity:1;font-weight:700}
+.path{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:6px 0 0;padding:0;counter-reset:p}
+.path li{background:rgba(0,0,0,.18);border-radius:10px;padding:6px 4px;text-align:center;font-size:13px;line-height:1.25}
+.path li b{display:block;font-weight:700;font-size:14px}
+.path li.done{background:rgba(255,255,255,.28)}
+.path li.now{background:#fff;color:var(--field)}
+.stage.hop svg{animation:hop .6s}
+@keyframes hop{30%{transform:translateY(-14px)}60%{transform:translateY(0)}80%{transform:translateY(-4px)}}
+.st .bar{height:10px;background:rgba(0,0,0,.22);border-radius:6px;overflow:hidden}
+.st .bar i{display:block;height:100%;border-radius:6px}
+.st em{font-style:normal;text-align:right;white-space:nowrap}
+.sample{font-size:13px;opacity:.9;margin-top:12px}
+.sample button{background:none;border:0;color:inherit;text-decoration:underline;font:inherit;cursor:pointer;padding:0 4px}
+.today{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:end;margin-bottom:16px}
+.sim{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sim label{font-size:14px;color:var(--mute)}
+input,select{font:16px "Noto Sans KR",sans-serif;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-height:44px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.btn{font:500 15px "Noto Sans KR",sans-serif;border-radius:10px;min-height:44px;padding:8px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--field)}
+.btn.go{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
+.btn.go:disabled{background:var(--soft);border-color:var(--line);color:var(--mute);cursor:not-allowed}
+.btn.sm{min-height:36px;padding:4px 12px;font-size:14px}
+.btn.add{border:2px solid var(--field);color:var(--field);font-weight:700;background:var(--card);min-width:6.5em}
+.btn.add:hover{background:color-mix(in srgb,var(--field) 12%,var(--card))}
+.btn.added{border:2px solid var(--field);background:var(--field);color:#fff;font-weight:700;min-width:6.5em}
+.btn.added:hover{background:var(--card);color:var(--acc2);border-color:var(--acc2)}
+.btn.added:hover .lbl{display:none}
+.btn.added:hover::after{content:'빼기'}
+.row.in{border-color:var(--field);box-shadow:inset 4px 0 0 var(--field)}
+.list{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.row .t{font-family:Jua,sans-serif;font-size:22px;white-space:nowrap;min-width:4.3em}
+.row .n{font-weight:500;overflow-wrap:anywhere}
+.row .m{font-size:13px;color:var(--mute)}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px;color:#fff;white-space:nowrap}
+.state{font-size:13px;color:var(--mute);text-align:right}
+.empty{background:var(--soft);border-radius:14px;padding:18px;color:var(--mute)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:28px;align-items:start}
+.filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:12px 0}
+.filters .full{grid-column:1/-1}
+.statpick{display:flex;gap:6px;flex-wrap:wrap}
+.statpick button{border-radius:99px;min-height:36px;padding:4px 12px;font-size:14px}
+.statpick button[aria-pressed=true]{color:#fff;border-color:transparent;background:#495057}
+.count{font-size:13px;color:var(--mute);margin:6px 0}
+.res .row{grid-template-columns:minmax(0,1fr) auto}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.bd{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--card)}
+.bd svg{width:40px;height:40px;display:block;margin-bottom:6px}
+.bd b{display:block;font-size:15px}
+.bd span{font-size:13px;color:var(--mute)}
+.bd.off{opacity:.45}
+.news .row{grid-template-columns:auto minmax(0,1fr) auto}
+.news a{color:var(--acc2);font-size:14px;white-space:nowrap}
+.rw{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.rw.ok{border-color:var(--acc);box-shadow:inset 4px 0 0 var(--acc)}
+.rw .n{font-weight:700}
+.rw .m{font-size:13px;color:var(--mute)}
+.rw .pb{grid-column:1/-1;height:8px;background:var(--soft);border-radius:5px;overflow:hidden}
+.rw .pb i{display:block;height:100%;background:var(--field);border-radius:5px}
+.rw.ok .pb i{background:var(--acc)}
+.rw .pv{font-size:13px;color:var(--mute);white-space:nowrap;text-align:right}
+.rw.ok .pv{color:var(--acc2);font-weight:700}
+.note{font-size:13px;color:var(--mute);margin:8px 0 0}
+.date{font-size:13px;color:var(--mute);white-space:nowrap}
+.sub{color:var(--mute);margin:6px 0 0}
+.soft{background:var(--soft)}
+footer{font-size:13px;color:var(--mute)}
+footer ul{margin:6px 0 0;padding-left:18px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+.modal.on{display:flex}
+.dlg{background:var(--card);color:var(--ink);border-radius:20px;max-width:520px;width:100%;padding:24px;max-height:90vh;overflow:auto}
+.dlg h2{color:var(--field)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10}
+.toast.on{opacity:1}
+@media(max-width:860px){.hero .wrap,.two{grid-template-columns:minmax(0,1fr)}.today{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.row{grid-template-columns:minmax(0,1fr) auto}.row .t{grid-column:1/-1;font-size:20px}.news .row{grid-template-columns:minmax(0,1fr)}.filters{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.apply{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--acc2);text-decoration:none;border:1.5px solid currentColor;border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap;vertical-align:1px}.apply:hover{background:var(--acc2);color:#fff}.apply:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
+</style>
 </head>
 <body>
 <header class="band hero">
@@ -767,77 +134,70 @@
       <div id="xpText" style="font-size:14px"></div>
       <div class="chips" id="chips"></div>
       <div class="stats" id="stats"></div>
-      <div class="sample" id="sampleNote">처음 화면은 예시 기록이에요.
-        <button id="resetBtn">새로 시작</button>
-        ·
-        <button id="demoBtn">예시 다시 보기</button>
-      </div>
+      <div class="sample" id="sampleNote">처음 화면은 예시 기록이에요.<button id="resetBtn">새로 시작</button>·<button id="demoBtn">예시 다시 보기</button></div>
     </div>
   </div>
 </header>
 
 <main>
-  <section class="band">
-    <div class="wrap">
-      <div class="today">
-        <div><h2>오늘 수업</h2>
-          <p class="sub" id="todayDate"></p></div>
-        <div class="sim" id="simBox" hidden>
-          <label for="simdt">시연용 시각</label>
-          <input type="datetime-local" id="simdt">
-          <button class="btn sm" id="nowBtn">지금</button>
-          <button class="btn sm" id="nextBtn">다음 수업 시간으로</button>
-        </div>
+<section class="band">
+  <div class="wrap">
+    <div class="today">
+      <div><h2>오늘 수업</h2><p class="sub" id="todayDate"></p></div>
+      <div class="sim">
+        <label for="simdt">시연용 시각</label>
+        <input type="datetime-local" id="simdt">
+        <button class="btn sm" id="nowBtn">지금</button>
+        <button class="btn sm" id="nextBtn">다음 수업 시간으로</button>
       </div>
-      <div class="list" id="todayList"></div>
-      <p class="sub" style="font-size:13px">출석 체크는 수업 시작 30분 전부터 끝난 뒤 30분까지, 하루 한 번만 열려요. 종일 이용(헬스
-        등)은 운영 시간 안에서 열려요.</p>
     </div>
-  </section>
+    <div class="list" id="todayList"></div>
+    <p class="sub" style="font-size:13px">출석 체크는 수업 시작 30분 전부터 끝난 뒤 30분까지, 하루 한 번만 열려요. 종일 이용(헬스 등)은 운영 시간 안에서 열려요.</p>
+  </div>
+</section>
 
-  <section class="band soft">
-    <div class="wrap two">
-      <div>
-        <h2>내 강좌</h2>
-        <p class="sub">등록한 강좌를 담아 두면 수업 시간에 체크할 수 있어요.</p>
-        <div class="list" id="myList" style="margin-top:14px"></div>
-      </div>
-      <div>
-        <h2>강좌 찾기</h2>
-        <p class="sub">4개 센터 실제 강좌 <b id="totalCount">0</b>개 (2026년 공공데이터)</p>
-        <div class="filters">
-          <select id="fCenter" aria-label="센터"></select>
-          <input id="fQ" type="search" placeholder="종목이나 강좌명 (예: 배드민턴)" aria-label="검색어">
-          <div class="statpick full" id="fStat"></div>
-          <label class="full" style="font-size:14px"><input type="checkbox" id="fAdult" checked
-                                                            style="min-height:auto"> 성인 강좌만</label>
-        </div>
-        <div class="count" id="resCount"></div>
-        <div class="list res" id="resList"></div>
-        <button class="btn" id="moreBtn" style="margin-top:10px;display:none">더 보기</button>
-      </div>
+<section class="band soft">
+  <div class="wrap two">
+    <div>
+      <h2>내 강좌</h2>
+      <p class="sub">등록한 강좌를 담아 두면 수업 시간에 체크할 수 있어요.</p>
+      <div class="list" id="myList" style="margin-top:14px"></div>
     </div>
-  </section>
+    <div>
+      <h2>강좌 찾기</h2>
+      <p class="sub">4개 센터 실제 강좌 <b id="totalCount">0</b>개 (2026년 공공데이터)</p>
+      <div class="filters">
+        <select id="fCenter" aria-label="센터"></select>
+        <input id="fQ" type="search" placeholder="종목이나 강좌명 (예: 배드민턴)" aria-label="검색어">
+        <div class="statpick full" id="fStat"></div>
+        <label class="full" style="font-size:14px"><input type="checkbox" id="fAdult" checked style="min-height:auto"> 성인 강좌만</label>
+      </div>
+      <div class="count" id="resCount"></div>
+      <div class="list res" id="resList"></div>
+      <button class="btn" id="moreBtn" style="margin-top:10px;display:none">더 보기</button>
+    </div>
+  </div>
+</section>
 
-  <section class="band">
-    <div class="wrap two">
-      <div>
-        <h2>배지</h2>
-        <p class="sub" id="badgeSum"></p>
-        <div class="badges" id="badges"></div>
-      </div>
-      <div class="news">
-        <h2>센터 혜택</h2>
-        <p class="sub">꾸준히 다니면 센터가 이미 하고 있는 등록·체험 이벤트와 연결돼요.</p>
-        <div class="list" id="rewardList" style="margin-top:14px"></div>
-        <p class="note">기관 협력 시 제공 예정인 혜택이에요(제안). 달성하면 센터 데스크에서 확인 후 받는 방식이에요.</p>
-        <h3 style="margin-top:22px">내 센터 소식</h3>
-        <div class="list" id="newsList" style="margin-top:10px"></div>
-        <h3 style="margin-top:22px">부족한 능력치 키우기</h3>
-        <div class="list" id="recList" style="margin-top:10px"></div>
-      </div>
+<section class="band">
+  <div class="wrap two">
+    <div>
+      <h2>배지</h2>
+      <p class="sub" id="badgeSum"></p>
+      <div class="badges" id="badges"></div>
     </div>
-  </section>
+    <div class="news">
+      <h2>센터 혜택</h2>
+      <p class="sub">꾸준히 다니면 센터가 이미 하고 있는 등록·체험 이벤트와 연결돼요.</p>
+      <div class="list" id="rewardList" style="margin-top:14px"></div>
+      <p class="note">기관 협력 시 제공 예정인 혜택이에요(제안). 달성하면 센터 데스크에서 확인 후 받는 방식이에요.</p>
+      <h3 style="margin-top:22px">내 센터 소식</h3>
+      <div class="list" id="newsList" style="margin-top:10px"></div>
+      <h3 style="margin-top:22px">부족한 능력치 키우기</h3>
+      <div class="list" id="recList" style="margin-top:10px"></div>
+    </div>
+  </div>
+</section>
 </main>
 
 <footer class="band soft">
@@ -847,704 +207,219 @@
       <li>올림픽수영장·올림픽스포츠센터·일산스포츠센터·분당스포츠센터 강좌정보 (2026년 5~7월 등록본, 2026년 6월 운영 강좌)</li>
       <li>스포츠센터 이벤트 정보 (2026-06-17 등록본, 2023년 이후 88건)</li>
     </ul>
-    <p style="margin:8px 0 0">2026년도 공공데이터 활용 경진대회 출품용 프로토타입이에요. 캐릭터 올리는 이 서비스를 위해 새로 만든 캐릭터예요. 기록은
-      이 브라우저에만 저장돼요.</p>
-    <p style="margin:4px 0 0">
-      <button class="linkbtn" id="demoMode">시연 모드 켜기</button>
-      (수업 시각을 바꿔 가며 출석 체크를 시험해 볼 수 있어요)
-    </p>
+    <p style="margin:8px 0 0">2026년도 공공데이터 활용 경진대회 출품용 프로토타입이에요. 캐릭터 올리는 이 서비스를 위해 새로 만든 캐릭터예요. 기록은 이 브라우저에만 저장돼요.</p>
   </div>
 </footer>
 
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-  <div class="dlg" id="dlg"></div>
-</div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div class="dlg" id="dlg"></div></div>
+<div class="toast" id="toast"></div>
 
 <script>
-  {
-    const CENTERS = ['올림픽수영장', '올림픽공원스포츠센터', '일산스포츠센터', '분당스포츠센터'];
-    const STATS = ['지구력', '근력', '유연성', '민첩성', '리듬감', '집중력', '기타'];
-    const SC = ['#1c7ed6', '#e8590c', '#ae3ec9', '#f59f00', '#e64980', '#0ca678', '#868e96'];
-    const DAYS = '일월화수목금토';
-    const KEY = 'teunteun-v1';
-    let COURSES = [], EVENTS = [], state = null, shown = 40, statFilter = -1;
-    const $ = id => document.getElementById(id);
-    const esc = s => String(s ?? '').replace(/[&<>"']/g,
-        c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
-    const keyOf = c => c.slice(0, 6).join('|');
-    const won = n => n ? n.toLocaleString('ko-KR') + '원' : '';
-    const pad = n => String(n).padStart(2, '0');
-    const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-    const mins = s => {
-      const [h, m] = s.split(':').map(Number);
-      return h * 60 + m
-    };
+{
+const CENTERS=['올림픽수영장','올림픽공원스포츠센터','일산스포츠센터','분당스포츠센터'];
+const STATS=['지구력','근력','유연성','민첩성','리듬감','집중력','기타'];
+const SC=['#1c7ed6','#e8590c','#ae3ec9','#f59f00','#e64980','#0ca678','#868e96'];
+const DAYS='일월화수목금토';
+const KEY='teunteun-v1';
+let COURSES=[],EVENTS=[],state=null,shown=40,statFilter=-1;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const keyOf=c=>c.slice(0,6).join('|');
+const won=n=>n?n.toLocaleString('ko-KR')+'원':'';
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const mins=s=>{const[h,m]=s.split(':').map(Number);return h*60+m};
+function parseTime(t){const[a,b]=t.split('-');return[mins(a),mins(b)]}
+function daySet(d){return new Set(d.split(',').map(x=>DAYS.indexOf(x.trim())).filter(i=>i>=0))}
+function windowOf(c){const[s,e]=parseTime(c[4]);return e-s>=360?[s,e]:[s-30,e+30]}
+function simNow(){const v=$('simdt').value;return v?new Date(v):new Date()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.courses)return s}catch(e){}return null}
+function findCourse(k){return COURSES.find(c=>keyOf(c)===k)}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2200)}
 
-    function parseTime(t) {
-      const [a, b] = t.split('-');
-      return [mins(a), mins(b)]
-    }
+/* ---- growth rules ---- */
+function statXP(){const x=[0,0,0,0,0,0,0];for(const l of state.log)x[l.s]+=l.xp;return x}
+function totalXP(){return state.log.reduce((a,l)=>a+l.xp,0)}
+function levelOf(xp){let lv=1,need=50,acc=0;while(xp>=acc+need){acc+=need;lv++;need=50+(lv-1)*20}return{lv,into:xp-acc,need}}
+const STAGES=[['알',1],['아기',3],['어린이',5],['운동선수',8],['챔피언',12]];
+const GEAR=['수경','덤벨','요가매트','라켓','헤드폰','집중 배지'];
+function stageIdx(lv){let i=0;STAGES.forEach((s,j)=>{if(lv>=s[1])i=j});return i}
+function stageOf(lv){return STAGES[stageIdx(lv)][0]}
+function weekKey(d){const t=new Date(d);t.setHours(0,0,0,0);t.setDate(t.getDate()-((t.getDay()+6)%7));return ymd(t)}
+function streakWeeks(now){const cnt={};for(const l of state.log){const w=weekKey(new Date(l.d+'T12:00'));cnt[w]=(cnt[w]||0)+1}
+  let w=new Date(now),n=0;if((cnt[weekKey(w)]||0)<2)w.setDate(w.getDate()-7);
+  while((cnt[weekKey(w)]||0)>=2){n++;w.setDate(w.getDate()-7)}return n}
+const BADGES=[
+ ['첫 출석','처음으로 수업에 체크',s=>s.log.length>=1],
+ ['한 주 세 번','같은 주에 3번 이상 체크',s=>{const c={};return s.log.some(l=>(c[weekKey(new Date(l.d+'T12:00'))]=(c[weekKey(new Date(l.d+'T12:00'))]||0)+1)>=3)}],
+ ['4주 연속','4주 연속 주 2회 이상',s=>streakWeeks(simNow())>=4],
+ ['두 종목 도전','서로 다른 종목 2개 이상',s=>new Set(s.log.map(l=>l.sp)).size>=2],
+ ['고른 성장','6개 능력치 모두 경험',s=>{const x=statXP();return x.slice(0,6).every(v=>v>0)}],
+ ['새벽 운동가','오전 7시 이전 수업 체크',s=>s.log.some(l=>l.m<420)],
+ ['100 경험치','누적 경험치 100',s=>totalXP()>=100],
+ ['운동선수','레벨 8 달성',s=>levelOf(totalXP()).lv>=8]];
 
-    function daySet(d) {
-      return new Set(d.split(',').map(x => DAYS.indexOf(x.trim())).filter(i => i >= 0))
-    }
+/* ---- centre rewards (proposal) ---- */
+function monthCount(now){const m=ymd(now).slice(0,7);return state.log.filter(l=>l.d.slice(0,7)===m).length}
+function rewards(){const now=simNow(),sw=streakWeeks(now),xp=statXP(),n=xp.slice(0,6).filter(v=>v>0).length,lv=levelOf(totalXP()).lv,mc=monthCount(now),mo=now.getMonth()+1;
+  return [
+   {id:'streak',name:'재등록 이벤트 추첨 자동 응모',cond:'4주 연속 주 2회 이상 출석',p:sw/4,v:`${Math.min(sw,4)}/4주`,basis:'비대면 회원등록 이벤트'},
+   {id:'all6',name:'다른 종목 일일 무료체험권 1회',cond:'6개 능력치 모두 경험',p:n/6,v:`${n}/6개`,basis:'일일무료체험 공개강습'},
+   {id:'champ',name:'재등록 할인 쿠폰',cond:'챔피언 단계(Lv.12) 달성',p:lv/12,v:`Lv.${Math.min(lv,12)}/12`,basis:'신규 회원 웰컴·재등록 이벤트'},
+   {id:'season'+ymd(now).slice(0,7),name:`${mo}월 시즌 챌린지 완주 추첨`,cond:`${mo}월에 12회 출석`,p:mc/12,v:`${Math.min(mc,12)}/12회`,basis:'헬스 미션·100일 챌린지'}
+  ].map(r=>({...r,ok:r.p>=1}))}
+function rewardHTML(list){return list.map(r=>`<div class="rw ${r.ok?'ok':''}"><div><div class="n">${esc(r.name)}</div><div class="m">${esc(r.cond)} · 근거: ${esc(r.basis)}</div></div><div class="pv">${r.ok?'달성! 센터에서 확인':esc(r.v)}</div><span class="pb"><i style="width:${Math.min(1,r.p)*100}%"></i></span></div>`).join('')}
 
-    function windowOf(c) {
-      const [s, e] = parseTime(c[4]);
-      return e - s >= 360 ? [s, e] : [s - 30, e + 30]
-    }
-
-    function simNow() {
-      const v = $('simdt').value;
-      return v ? new Date(v) : new Date()
-    }
-
-    function save() {
-      try {
-        localStorage.setItem(KEY, JSON.stringify(state))
-      } catch (e) {
-      }
-    }
-
-    function load() {
-      try {
-        const s = JSON.parse(localStorage.getItem(KEY) || 'null');
-        if (s && s.courses) {
-          return s
-        }
-      } catch (e) {
-      }
-      return null
-    }
-
-    function findCourse(k) {
-      return COURSES.find(c => keyOf(c) === k)
-    }
-
-    function toast(m, undo) {
-      const t = $('toast');
-      t.textContent = m;
-      if (undo) {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.textContent = '되돌리기';
-        b.onclick = () => {
-          t.classList.remove('on');
-          undo()
-        };
-        t.append(b)
-      }
-      t.classList.add('on');
-      clearTimeout(toast.h);
-      toast.h = setTimeout(() => t.classList.remove('on'), undo ? 6000 : 2200)
-    }
-
-    function swapState(next, msg) {
-      const prev = state;
-      state = next;
-      save();
-      renderAll();
-      toast(msg, () => {
-        state = prev;
-        save();
-        renderAll();
-        toast('되돌렸어요')
-      })
-    }
-
-    /* ---- growth rules ---- */
-    function statXP() {
-      const x = [0, 0, 0, 0, 0, 0, 0];
-      for (const l of state.log) {
-        x[l.s] += l.xp;
-      }
-      return x
-    }
-
-    function totalXP() {
-      return state.log.reduce((a, l) => a + l.xp, 0)
-    }
-
-    function levelOf(xp) {
-      let lv = 1, need = 50, acc = 0;
-      while (xp >= acc + need) {
-        acc += need;
-        lv++;
-        need = 50 + (lv - 1) * 20
-      }
-      return {lv, into: xp - acc, need}
-    }
-
-    const STAGES = [['알', 1], ['아기', 3], ['어린이', 5], ['운동선수', 8], ['챔피언', 12]];
-    const GEAR = ['수경', '덤벨', '요가매트', '라켓', '헤드폰', '집중 배지'];
-
-    function stageIdx(lv) {
-      let i = 0;
-      STAGES.forEach((s, j) => {
-        if (lv >= s[1]) {
-          i = j
-        }
-      });
-      return i
-    }
-
-    function stageOf(lv) {
-      return STAGES[stageIdx(lv)][0]
-    }
-
-    function weekKey(d) {
-      const t = new Date(d);
-      t.setHours(0, 0, 0, 0);
-      t.setDate(t.getDate() - ((t.getDay() + 6) % 7));
-      return ymd(t)
-    }
-
-    function streakWeeks(now) {
-      const cnt = {};
-      for (const l of state.log) {
-        const w = weekKey(new Date(l.d + 'T12:00'));
-        cnt[w] = (cnt[w] || 0) + 1
-      }
-      let w = new Date(now), n = 0;
-      if ((cnt[weekKey(w)] || 0) < 2) {
-        w.setDate(w.getDate() - 7);
-      }
-      while ((cnt[weekKey(w)] || 0) >= 2) {
-        n++;
-        w.setDate(w.getDate() - 7)
-      }
-      return n
-    }
-
-    const BADGES = [
-      ['첫 출석', '처음으로 수업에 체크', s => s.log.length >= 1],
-      ['한 주 세 번', '같은 주에 3번 이상 체크', s => {
-        const c = {};
-        return s.log.some(
-            l => (c[weekKey(new Date(l.d + 'T12:00'))] = (c[weekKey(new Date(l.d + 'T12:00'))] || 0)
-                + 1) >= 3)
-      }],
-      ['4주 연속', '4주 연속 주 2회 이상', s => streakWeeks(simNow()) >= 4],
-      ['두 종목 도전', '서로 다른 종목 2개 이상', s => new Set(s.log.map(l => l.sp)).size >= 2],
-      ['고른 성장', '6개 능력치 모두 경험', s => {
-        const x = statXP();
-        return x.slice(0, 6).every(v => v > 0)
-      }],
-      ['새벽 운동가', '오전 7시 이전 수업 체크', s => s.log.some(l => l.m < 420)],
-      ['100 경험치', '누적 경험치 100', s => totalXP() >= 100],
-      ['운동선수', '레벨 8 달성', s => levelOf(totalXP()).lv >= 8]];
-
-    /* ---- centre rewards (proposal) ---- */
-    function monthCount(now) {
-      const m = ymd(now).slice(0, 7);
-      return state.log.filter(l => l.d.slice(0, 7) === m).length
-    }
-
-    function rewards() {
-      const now = simNow(), sw = streakWeeks(now), xp = statXP(),
-          n = xp.slice(0, 6).filter(v => v > 0).length, lv = levelOf(totalXP()).lv,
-          mc = monthCount(now), mo = now.getMonth() + 1;
-      return [
-        {
-          id: 'streak',
-          name: '재등록 이벤트 추첨 자동 응모',
-          cond: '4주 연속 주 2회 이상 출석',
-          p: sw / 4,
-          v: `${Math.min(sw, 4)}/4주`,
-          basis: '비대면 회원등록 이벤트'
-        },
-        {
-          id: 'all6',
-          name: '다른 종목 일일 무료체험권 1회',
-          cond: '6개 능력치 모두 경험',
-          p: n / 6,
-          v: `${n}/6개`,
-          basis: '일일무료체험 공개강습'
-        },
-        {
-          id: 'champ',
-          name: '재등록 할인 쿠폰',
-          cond: '챔피언 단계(Lv.12) 달성',
-          p: lv / 12,
-          v: `Lv.${Math.min(lv, 12)}/12`,
-          basis: '신규 회원 웰컴·재등록 이벤트'
-        },
-        {
-          id: 'season' + ymd(now).slice(0, 7),
-          name: `${mo}월 시즌 챌린지 완주 추첨`,
-          cond: `${mo}월에 12회 출석`,
-          p: mc / 12,
-          v: `${Math.min(mc, 12)}/12회`,
-          basis: '헬스 미션·100일 챌린지'
-        }
-      ].map(r => ({...r, ok: r.p >= 1}))
-    }
-
-    function rewardHTML(list) {
-      return list.map(r => `<div class="rw ${r.ok ? 'ok' : ''}"><div><div class="n">${esc(
-          r.name)}</div><div class="m">${esc(r.cond)} · 근거: ${esc(
-          r.basis)}</div></div><div class="pv">${r.ok ? '달성! 센터에서 확인' : esc(
-          r.v)}</div><span class="pb"><i style="width:${Math.min(1, r.p)
-      * 100}%"></i></span></div>`).join('')
-    }
-
-    /* ---- character ---- */
-    function drawTree() {
-      const xp = statXP(), lv = levelOf(totalXP()).lv, si = stageIdx(lv), has = i => xp[i] >= 30;
-      const sc = [0.62, 0.62, 0.8, 1, 1.06][si], Y = '#ffd43b', Yd = '#f2b705', K = '#14231a';
-      const ground = `<ellipse cx="200" cy="332" rx="150" ry="16" fill="#1e6b30" opacity=".55"/><ellipse cx="200" cy="330" rx="70" ry="8" fill="#000" opacity=".2"/>`;
-      let body = '';
-      if (si === 0) {
-        body = `<path d="M200 168 C255 168 280 250 280 285 C280 318 245 332 200 332 C155 332 120 318 120 285 C120 250 145 168 200 168Z" fill="#fff"/>
+/* ---- character ---- */
+function drawTree(){
+  const xp=statXP(),lv=levelOf(totalXP()).lv,si=stageIdx(lv),has=i=>xp[i]>=30;
+  const sc=[0.62,0.62,0.8,1,1.06][si],Y='#ffd43b',Yd='#f2b705',K='#14231a';
+  const ground=`<ellipse cx="200" cy="332" rx="150" ry="16" fill="#1e6b30" opacity=".55"/><ellipse cx="200" cy="330" rx="70" ry="8" fill="#000" opacity=".2"/>`;
+  let body='';
+  if(si===0){
+    body=`<path d="M200 168 C255 168 280 250 280 285 C280 318 245 332 200 332 C155 332 120 318 120 285 C120 250 145 168 200 168Z" fill="#fff"/>
      <path d="M200 168 C255 168 280 250 280 285 C280 318 245 332 200 332 C232 316 248 280 240 240 C232 200 214 178 200 168Z" fill="#000" opacity=".08"/>
      <circle cx="160" cy="290" r="10" fill="${Y}"/><circle cx="246" cy="270" r="7" fill="${Y}"/><circle cx="214" cy="306" r="6" fill="${Y}"/>
      <path d="M132 238 L158 226 L176 242 L198 224 L220 244 L242 228 L268 238" stroke="${K}" stroke-width="3" fill="none" stroke-linejoin="round"/>
      <circle cx="182" cy="212" r="7" fill="${K}"/><circle cx="218" cy="212" r="7" fill="${K}"/>`;
-      } else {
-        const mus = has(1) && si >= 3;
-        const arm = (sx) => `<path d="M${sx * 58} -96 Q${sx * 92} -88 ${sx
-        * 98} -58" stroke="${Y}" stroke-width="${si >= 3 ? 20
-            : 16}" fill="none" stroke-linecap="round"/>${mus ? `<circle cx="${sx
-        * 80}" cy="-90" r="14" fill="${Y}"/><path d="M${sx * 72} -98 q${sx * 8} -6 ${sx
-        * 16} 0" stroke="${Yd}" stroke-width="3" fill="none"/>` : ''}`;
-        let g = '';
-        if (has(
-            2)) {
-          g += `<rect x="-112" y="-6" width="224" height="14" rx="7" fill="#ae3ec9"/><rect x="-112" y="-6" width="224" height="5" rx="3" fill="#fff" opacity=".25"/>`;
-        }
-        g += `<ellipse cx="-30" cy="-6" rx="24" ry="13" fill="${Yd}"/><ellipse cx="30" cy="-6" rx="24" ry="13" fill="${Yd}"/>`;
-        g += arm(-1) + arm(1);
-        g += `<ellipse cx="0" cy="-92" rx="70" ry="${si >= 3 ? 84
-            : 78}" fill="${Y}"/><path d="M20 -172 C70 -160 78 -40 30 -10 C60 -50 62 -130 20 -172Z" fill="${Yd}" opacity=".6"/><ellipse cx="-30" cy="-140" rx="16" ry="10" fill="#fff" opacity=".45"/>`;
-        g += `<ellipse cx="-24" cy="-108" rx="7" ry="8" fill="${K}"/><ellipse cx="24" cy="-108" rx="7" ry="8" fill="${K}"/><circle cx="-22" cy="-111" r="2.5" fill="#fff"/><circle cx="26" cy="-111" r="2.5" fill="#fff"/>`;
-        g += `<path d="M-14 -88 Q0 -76 14 -88" stroke="${K}" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="-44" cy="-92" r="8" fill="#ff8787" opacity=".7"/><circle cx="44" cy="-92" r="8" fill="#ff8787" opacity=".7"/>`;
-        if (has(
-            0)) {
-          g += `<path d="M-68 -140 Q0 -152 68 -140" stroke="#1864ab" stroke-width="7" fill="none"/><circle cx="-24" cy="-145" r="13" fill="#74c0fc" stroke="#1864ab" stroke-width="4"/><circle cx="24" cy="-145" r="13" fill="#74c0fc" stroke="#1864ab" stroke-width="4"/>`;
-        }
-        if (has(
-            4)) {
-          g += `<path d="M-66 -120 Q-60 -196 0 -198 Q60 -196 66 -120" stroke="#c2255c" stroke-width="8" fill="none"/><rect x="-80" y="-136" width="20" height="32" rx="9" fill="#e64980"/><rect x="60" y="-136" width="20" height="32" rx="9" fill="#e64980"/>`;
-        }
-        if (has(
-            5)) {
-          g += `<path d="M34 -62 l5 10 11 2 -8 8 2 11 -10 -5 -10 5 2 -11 -8 -8 11 -2z" fill="#0ca678" stroke="#fff" stroke-width="2"/>`;
-        }
-        if (has(
-            1)) {
-          g += `<g transform="translate(104 -56)"><rect x="-26" y="-3" width="52" height="6" rx="3" fill="#495057"/><rect x="-30" y="-14" width="10" height="28" rx="3" fill="#e8590c"/><rect x="20" y="-14" width="10" height="28" rx="3" fill="#e8590c"/></g>`;
-        }
-        if (has(
-            3)) {
-          g += `<g transform="translate(-102 -56) rotate(-25)"><rect x="-3" y="-4" width="6" height="34" rx="3" fill="#495057"/><ellipse cx="0" cy="-30" rx="20" ry="26" fill="none" stroke="#f59f00" stroke-width="6"/><path d="M-12 -44 L12 -16 M12 -44 L-12 -16 M-18 -30 L18 -30" stroke="#f59f00" stroke-width="1.5" opacity=".7"/></g>`;
-        }
-        if (si
-            === 4) {
-          g += `<circle cx="-30" cy="-50" r="13" fill="#fcc419" stroke="#f08c00" stroke-width="3"/><path d="M-36 -64 L-30 -54 L-24 -64" stroke="#1c7ed6" stroke-width="5" fill="none"/><path d="M-30 -178 l12 -24 18 16 18 -16 12 24z" fill="#fcc419" stroke="#f08c00" stroke-width="3"/>`;
-        }
-        body = `<g transform="translate(200 330) scale(${sc})">${g}</g>`;
-      }
-      $('stage').innerHTML = `<svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${ground}${body}</svg>`
-    }
-
-    /* ---- render ---- */
-    function renderHero() {
-      const t = totalXP(), L = levelOf(t), xp = statXP(), now = simNow();
-      $('lvNum').textContent = 'Lv.' + L.lv;
-      $('lvStage').textContent = `${stageOf(L.lv)} 올리`;
-      const si = stageIdx(L.lv);
-      $('path').innerHTML = STAGES.map((st, j) => `<li class="${j < si ? 'done' : j === si ? 'now'
-          : ''}"><b>${st[0]}</b><span>Lv.${st[1]}</span></li>`).join('');
-      $('xpFill').style.width = (L.into / L.need * 100) + '%';
-      $('xpText').textContent = `다음 레벨까지 ${L.need - L.into} 경험치 · 누적 ${t}`;
-      const sw = streakWeeks(now),
-          wk = state.log.filter(l => weekKey(new Date(l.d + 'T12:00')) === weekKey(now)).length;
-      $('chips').innerHTML = [`이번 주 ${wk}회`, `${sw}주 연속`, `총 ${state.log.length}회 출석`,
-        sw >= 2 ? '연속 보너스 +5' : '주 2회면 연속 보너스'].map(
-          x => `<span class="chip">${esc(x)}</span>`).join('');
-      const mx = Math.max(30, ...xp.slice(0, 6));
-      $('stats').innerHTML = STATS.slice(0, 6).map((s, i) => {
-        const sl = Math.floor(xp[i] / 30) + 1;
-        return `<div class="st"><span>${s}</span><span class="bar"><i style="width:${xp[i] / mx
-        * 100}%;background:${SC[i]}"></i></span><em>Lv.${sl}</em><small class="${sl >= 2 ? 'got'
-            : ''}">${sl >= 2 ? GEAR[i] + ' 획득' : GEAR[i] + ' · Lv.2에'}</small></div>`
-      }).join('');
-      drawTree()
-    }
-
-    const SPM = 'https://www.ksponco.or.kr/spm/index.do';
-
-    function applyURL(c) {
-      return /^https:\/\/www\.ksponco\.or\.kr\//.test(c[8] || '') && !/\/spm\/?$/.test(c[8]) ? c[8]
-          : SPM
-    }
-
-    function applyLink(c) {
-      return `<a class="apply" href="${esc(
-          applyURL(c))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(
-          c[2])} 수강신청 페이지 새 창으로 열기">수강신청 ↗</a>`
-    }
-
-    function courseMeta(c) {
-      return `${CENTERS[c[0]]} · ${c[5]} · ${won(c[7])}`
-    }
-
-    function checkedToday(k, now) {
-      return state.log.some(l => l.k === k && l.d === ymd(now))
-    }
-
-    function renderToday() {
-      const now = simNow(), wd = now.getDay(), m = now.getHours() * 60 + now.getMinutes();
-      $('todayDate').textContent = `${now.getMonth() + 1}월 ${now.getDate()}일 ${DAYS[wd]}요일 ${pad(
-          now.getHours())}:${pad(now.getMinutes())} 기준`;
-      const list = state.courses.map(findCourse).filter(Boolean).filter(
-          c => daySet(c[5]).has(wd)).sort((a, b) => parseTime(a[4])[0] - parseTime(b[4])[0]);
-      if (!state.courses.length) {
-        $('todayList').innerHTML = '<div class="empty">아직 담은 강좌가 없어요. 아래 강좌 찾기에서 다니는 강좌를 담아 주세요.</div>';
-        return
-      }
-      if (!list.length) {
-        $('todayList').innerHTML = '<div class="empty">오늘은 수업이 없는 날이에요. 푹 쉬고 다음 수업에서 만나요.</div>';
-        return
-      }
-      $('todayList').innerHTML = list.map(c => {
-        const k = keyOf(c), [ws, we] = windowOf(c), done = checkedToday(k, now),
-            open = !done && m >= ws && m <= we;
-        const st = done ? '오늘 체크 완료' : m < ws ? `${pad(Math.floor(ws / 60))}:${pad(ws % 60)}부터 체크`
-            : m > we ? '체크 시간이 지났어요' : '지금 체크할 수 있어요';
-        return `<div class="row"><div class="t">${esc(
-            c[4].split('-')[0])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(
-            c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(
-            CENTERS[c[0]])} · ${esc(c[4])} · ${esc(
-            STATS[c[1]])} +10</div></div><div><button class="btn go" data-check="${esc(k)}" ${open
-            ? '' : 'disabled'}>${done ? '완료' : '출석 체크'}</button><div class="state">${esc(
-            st)}</div></div></div>`
-      }).join('')
-    }
-
-    function renderMine() {
-      const list = state.courses.map(findCourse).filter(Boolean);
-      $('myList').innerHTML = list.length ? list.map(
-              c => `<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(
-                  c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(
-                  courseMeta(c))} · ${esc(c[4])}${applyLink(
-                  c)}</div></div><button class="btn sm" data-del="${esc(
-                  keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join('')
-          : '<div class="empty">담은 강좌가 없어요.</div>'
-    }
-
-    function filtered() {
-      const ce = $('fCenter').value, q = $('fQ').value.trim(), adult = $('fAdult').checked;
-      return COURSES.filter(
-          c => (ce === '' || c[0] == ce) && (statFilter < 0 || c[1] === statFilter) && (!q
-              || c[2].includes(q) || c[3].includes(q)) && (!adult
-              || !/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6] + c[3] + c[2])))
-    }
-
-    function renderSearch() {
-      const r = filtered(), mine = new Set(state.courses);
-      $('resCount').textContent = `${r.length.toLocaleString('ko-KR')}개 강좌`;
-      $('resList').innerHTML = r.slice(0, shown).map(c => {
-        const k = keyOf(c), has = mine.has(k);
-        return `<div class="row ${has ? 'in'
-            : ''}"><div><span class="tag" style="background:${SC[c[1]]}">${esc(
-            c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(
-            courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div>${has
-            ? `<div class="inwrap"><span class="inlbl">✓ 담은 강좌</span><button class="btn sm" data-del="${esc(
-                k)}" style="color:var(--acc2)" aria-label="${esc(
-                c[2] + ' ' + c[3])} 내 강좌에서 빼기">빼기</button></div>`
-            : `<button class="btn sm add" data-add="${esc(k)}">+ 담기</button>`}</div>`
-      }).join('') || '<div class="empty">조건에 맞는 강좌가 없어요.</div>';
-      $('moreBtn').style.display = r.length > shown ? 'inline-block' : 'none'
-    }
-
-    function renderBadges() {
-      const got = BADGES.map(b => b[2](state));
-      $('badgeSum').textContent = `${got.filter(Boolean).length} / ${BADGES.length}개 획득`;
-      $('badges').innerHTML = BADGES.map((b, i) => `<div class="bd ${got[i] ? ''
-          : 'off'}"><svg viewBox="0 0 40 40"><path d="M20 3l14 8v18l-14 8-14-8V11z" fill="${got[i]
-          ? SC[i % 6]
-          : '#adb5bd'}"/><path d="M14 20l4 4 8-9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${esc(
-          b[0])}</b><span>${esc(b[1])}</span></div>`).join('')
-    }
-
-    function myCenters() {
-      return new Set(state.courses.map(findCourse).filter(Boolean).map(c => c[0]))
-    }
-
-    function newsFor(n) {
-      const cs = myCenters(), now = ymd(simNow());
-      return EVENTS.filter(e => cs.has(e[0]) && e[5] !== '당첨 발표' && e[4] <= now).slice(0, n)
-    }
-
-    function newsHTML(list) {
-      return list.length ? list.map(e => {
-        const live = e[2] && e[3] && e[2] <= ymd(simNow()) && ymd(simNow()) <= e[3];
-        return `<div class="row"><span class="tag" style="background:${live ? 'var(--acc)'
-            : '#495057'}">${live ? '진행 중' : esc(e[5])}</span><div><div class="n">${esc(
-            e[1])}</div><div class="m">${esc(CENTERS[e[0]])} · ${esc(e[2] || e[4])}${e[3] ? ' ~ '
-            + esc(e[3]) : ''}</div></div>${e[6] ? `<a href="${esc(e[6])}">게시글 보기</a>` : ''}</div>`
-      }).join('') : '<div class="empty">담은 강좌의 센터 소식이 없어요.</div>'
-    }
-
-    function recs(n) {
-      const xp = statXP(), cs = myCenters(), mine = new Set(state.courses);
-      const weak = [0, 1, 2, 3, 4, 5].sort((a, b) => xp[a] - xp[b])[0];
-      const pool = COURSES.filter(
-          c => c[1] === weak && (cs.size ? cs.has(c[0]) : true) && !mine.has(keyOf(c))
-              && !/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6] + c[3]));
-      return {weak, list: pool.slice(0, n)}
-    }
-
-    function renderSide() {
-      $('rewardList').innerHTML = rewardHTML(rewards());
-      $('newsList').innerHTML = newsHTML(newsFor(4));
-      const r = recs(3);
-      $('recList').innerHTML = `<p class="sub" style="margin:0">지금 가장 낮은 능력치는 <b style="color:${SC[r.weak]}">${STATS[r.weak]}</b>이에요.</p>`
-          + (r.list.map(
-                  c => `<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(
-                      c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(
-                      courseMeta(c))} · ${esc(c[4])}${applyLink(
-                      c)}</div></div><button class="btn sm add" data-add="${esc(
-                      keyOf(c))}">+ 담기</button></div>`).join('')
-              || '<div class="empty">추천할 강좌가 없어요.</div>')
-          + '<p class="note" style="margin:8px 0 0">수강신청은 한국체육산업개발 온라인 수강신청 페이지에서 해요. 신청 후 + 담기를 누르면 출석 체크를 시작할 수 있어요.</p>'
-    }
-
-    function renderAll() {
-      renderHero();
-      renderToday();
-      renderMine();
-      renderSearch();
-      renderBadges();
-      renderSide()
-    }
-
-    /* ---- actions ---- */
-    function doCheck(k) {
-      const c = findCourse(k), now = simNow();
-      if (!c || checkedToday(k, now)) {
-        return;
-      }
-      const okBefore = new Set(rewards().filter(r => r.ok).map(r => r.id)),
-          before = levelOf(totalXP()).lv, bonus = streakWeeks(now) >= 2 ? 5 : 0, xp = 10 + bonus;
-      state.log.push({k, d: ymd(now), s: c[1], sp: c[2], xp, m: parseTime(c[4])[0]});
-      save();
-      const after = levelOf(totalXP()).lv;
-      renderAll();
-      toast(`${STATS[c[1]]} +${xp}${bonus ? ' (연속 보너스)' : ''}`);
-      const st = $('stage');
-      st.classList.remove('hop');
-      void st.offsetWidth;
-      st.classList.add('hop');
-      const fresh = rewards().filter(r => r.ok && !okBefore.has(r.id));
-      if (after > before || fresh.length) {
-        levelUp(after > before ? after : 0, fresh)
-      }
-    }
-
-    function levelUp(lv, fresh) {
-      const r = recs(2), news = newsFor(3),
-          nextR = rewards().filter(x => !x.ok).sort((a, b) => b.p - a.p).slice(0, 1);
-      $('dlg').innerHTML = `<h2 id="mTitle">${lv ? `Lv.${lv} 달성! ${esc(stageOf(lv))} 올리`
-          : '센터 혜택을 달성했어요'}</h2><p class="sub">꾸준히 다닌 덕분이에요. 센터 혜택과 다음 도전을 골라 봤어요.</p>
-   ${fresh.length ? `<h3 style="margin:16px 0 8px">새로 달성한 센터 혜택</h3><div class="list">${rewardHTML(
-          fresh)}</div><p class="note">센터 데스크에서 확인 후 받을 수 있어요(기관 협력 시 제공 예정).</p>` : ''}
-   ${nextR.length ? `<h3 style="margin:16px 0 8px">다음 센터 혜택까지</h3><div class="list">${rewardHTML(
-          nextR)}</div>` : ''}
-   <h3 style="margin:16px 0 8px">내 센터 소식</h3><div class="list news">${newsHTML(news)}</div>
-   <h3 style="margin:16px 0 8px">${esc(STATS[r.weak])} 키우기 추천</h3><div class="list">${r.list.map(
-          c => `<div class="row" style="grid-template-columns:minmax(0,1fr)"><div><span class="tag" style="background:${SC[c[1]]}">${esc(
-              c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(
-              courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div></div>`).join('')
-      || '<div class="empty">추천할 강좌가 없어요.</div>'}</div>
-   <button class="btn go" id="closeM" style="margin-top:18px;width:100%">계속하기</button>`;
-      $('modal').classList.add('on');
-      $('closeM').focus()
-    }
-
-    function nextSlot() {
-      const base = simNow();
-      for (let add = 0; add < 8; add++) {
-        const d = new Date(base);
-        d.setDate(d.getDate() + add);
-        const cands = state.courses.map(findCourse).filter(Boolean).filter(
-            c => daySet(c[5]).has(d.getDay()) && !state.log.some(
-                l => l.k === keyOf(c) && l.d === ymd(d))).map(c => parseTime(c[4])[0]).sort(
-            (a, b) => a - b);
-        for (const s of cands) {
-          const t = new Date(d);
-          t.setHours(Math.floor(s / 60), s % 60, 0, 0);
-          if (t >= base || add === 0 && base - t < 1800000) {
-            return t
-          }
-        }
-      }
-      return null
-    }
-
-    function setSim(d) {
-      $('simdt').value = `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-      renderAll()
-    }
-
-    function demoState() {
-      const pick = (ce, sp, re) => COURSES.find(c => c[0] === ce && c[2] === sp && re.test(c[3]));
-      const cs = [pick(3, '헬스', /매일\/성인/), pick(3, '배드민턴', /19시 성인/),
-        pick(2, '수영', /^(19|20)시/) || pick(2, '수영', /./)].filter(Boolean);
-      const s = {name: '나', courses: cs.map(keyOf), log: []}, now = simNow();
-      for (let back = 24; back >= 1; back--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - back);
-        cs.forEach((c, i) => {
-          if (daySet(c[5]).has(d.getDay()) && (back * 7 + i * 3) % 5 < 2) {
-            s.log.push(
-                {k: keyOf(c), d: ymd(d), s: c[1], sp: c[2], xp: 10, m: parseTime(c[4])[0]})
-          }
-        })
-      }
-      return s
-    }
-
-    document.addEventListener('click', e => {
-      const t = e.target.closest('button');
-      if (!t) {
-        return;
-      }
-      if (t.dataset.check) {
-        doCheck(t.dataset.check);
-      } else if (t.dataset.add) {
-        if (!state.courses.includes(t.dataset.add)) {
-          state.courses.push(t.dataset.add);
-          save();
-          renderAll();
-          toast('내 강좌에 담았어요')
-        }
-      } else if (t.dataset.del) {
-        const k = t.dataset.del;
-        swapState({...state, courses: state.courses.filter(x => x !== k)}, '내 강좌에서 뺐어요')
-      } else if (t.id === 'closeM') {
-        $('modal').classList.remove('on')
-      }
-    });
-    $('modal').addEventListener('click', e => {
-      if (e.target.id === 'modal') {
-        $('modal').classList.remove('on')
-      }
-    });
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        $('modal').classList.remove('on')
-      }
-    });
-    $('nowBtn').onclick = () => setSim(new Date());
-    $('nextBtn').onclick = () => {
-      const t = nextSlot();
-      if (t) {
-        setSim(t);
-      } else {
-        toast('이번 주에 남은 수업이 없어요')
-      }
-    };
-    $('simdt').onchange = renderAll;
-    const hasData = () => state.log.length || state.courses.length;
-    $('resetBtn').onclick = () => {
-      if (hasData() && !confirm(
-          `출석 기록 ${state.log.length}회와 담은 강좌 ${state.courses.length}개가 모두 지워져요. 새로 시작할까요?`)) {
-        return;
-      }
-      swapState({name: '나', courses: [], log: []}, '새로 시작했어요')
-    };
-    $('demoBtn').onclick = () => {
-      if (hasData() && !confirm('지금 기록 대신 예시 기록으로 바뀌어요. 계속할까요?')) {
-        return;
-      }
-      swapState(demoState(), '예시 기록으로 바꿨어요')
-    };
-    let demo = false;
-
-    function setDemo(on) {
-      demo = on;
-      $('simBox').hidden = !on;
-      $('demoMode').textContent = on ? '시연 모드 끄기' : '시연 모드 켜기';
-      if (on) {
-        if (!$('simdt').value) {
-          setSimInit()
-        }
-      } else {
-        $('simdt').value = '';
-      }
-      try {
-        localStorage.setItem('oli-demo', on ? '1' : '')
-      } catch (e) {
-      }
-    }
-
-    $('demoMode').onclick = () => {
-      setDemo(!demo);
-      if (state) {
-        renderAll()
-      }
-    };
-    setInterval(() => {
-      if (!demo && state) {
-        renderToday()
-      }
-    }, 60000);
-    $('fCenter').innerHTML = '<option value="">전체 센터</option>' + CENTERS.map(
-        (c, i) => `<option value="${i}">${c}</option>`).join('');
-    $('fStat').innerHTML = ['전체', ...STATS.slice(0, 6)].map(
-        (s, i) => `<button class="btn" data-stat="${i - 1}" aria-pressed="${i === 0}" ${i
-            ? `style="--c:${SC[i - 1]}"` : ''}>${s}</button>`).join('');
-    $('fStat').addEventListener('click', e => {
-      const b = e.target.closest('[data-stat]');
-      if (!b) {
-        return;
-      }
-      statFilter = +b.dataset.stat;
-      for (const x of $('fStat').children) {
-        const on = x === b;
-        x.setAttribute('aria-pressed', on);
-        x.style.background = on ? (statFilter < 0 ? 'var(--ink)' : SC[statFilter]) : ''
-      }
-      shown = 40;
-      renderSearch()
-    });
-    ['fCenter', 'fQ', 'fAdult'].forEach(id => $(id).addEventListener('input', () => {
-      shown = 40;
-      renderSearch()
-    }));
-    $('moreBtn').onclick = () => {
-      shown += 40;
-      renderSearch()
-    };
-
-    {
-      let on = new URLSearchParams(location.search).has('demo');
-      try {
-        on = on || localStorage.getItem('oli-demo') === '1'
-      } catch (e) {
-      }
-      setDemo(on)
-    }
-    Promise.all([fetch('./courses.json').then(r => r.json()),
-      fetch('./events.json').then(r => r.json())]).then(([c, ev]) => {
-      COURSES = c;
-      EVENTS = ev;
-      $('totalCount').textContent = c.length.toLocaleString('ko-KR');
-      state = load() || demoState();
-      save();
-      renderAll();
-    }).catch(() => {
-      $('todayList').innerHTML = '<div class="empty">강좌 데이터를 불러오지 못했어요. 새로고침해 주세요.</div>'
-    });
-
-    function setSimInit() {
-      const d = new Date();
-      $('simdt').value = `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-    }
+  }else{
+    const mus=has(1)&&si>=3;
+    const arm=(sx)=>`<path d="M${sx*58} -96 Q${sx*92} -88 ${sx*98} -58" stroke="${Y}" stroke-width="${si>=3?20:16}" fill="none" stroke-linecap="round"/>${mus?`<circle cx="${sx*80}" cy="-90" r="14" fill="${Y}"/><path d="M${sx*72} -98 q${sx*8} -6 ${sx*16} 0" stroke="${Yd}" stroke-width="3" fill="none"/>`:''}`;
+    let g='';
+    if(has(2))g+=`<rect x="-112" y="-6" width="224" height="14" rx="7" fill="#ae3ec9"/><rect x="-112" y="-6" width="224" height="5" rx="3" fill="#fff" opacity=".25"/>`;
+    g+=`<ellipse cx="-30" cy="-6" rx="24" ry="13" fill="${Yd}"/><ellipse cx="30" cy="-6" rx="24" ry="13" fill="${Yd}"/>`;
+    g+=arm(-1)+arm(1);
+    g+=`<ellipse cx="0" cy="-92" rx="70" ry="${si>=3?84:78}" fill="${Y}"/><path d="M20 -172 C70 -160 78 -40 30 -10 C60 -50 62 -130 20 -172Z" fill="${Yd}" opacity=".6"/><ellipse cx="-30" cy="-140" rx="16" ry="10" fill="#fff" opacity=".45"/>`;
+    g+=`<ellipse cx="-24" cy="-108" rx="7" ry="8" fill="${K}"/><ellipse cx="24" cy="-108" rx="7" ry="8" fill="${K}"/><circle cx="-22" cy="-111" r="2.5" fill="#fff"/><circle cx="26" cy="-111" r="2.5" fill="#fff"/>`;
+    g+=`<path d="M-14 -88 Q0 -76 14 -88" stroke="${K}" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="-44" cy="-92" r="8" fill="#ff8787" opacity=".7"/><circle cx="44" cy="-92" r="8" fill="#ff8787" opacity=".7"/>`;
+    if(has(0))g+=`<path d="M-68 -140 Q0 -152 68 -140" stroke="#1864ab" stroke-width="7" fill="none"/><circle cx="-24" cy="-145" r="13" fill="#74c0fc" stroke="#1864ab" stroke-width="4"/><circle cx="24" cy="-145" r="13" fill="#74c0fc" stroke="#1864ab" stroke-width="4"/>`;
+    if(has(4))g+=`<path d="M-66 -120 Q-60 -196 0 -198 Q60 -196 66 -120" stroke="#c2255c" stroke-width="8" fill="none"/><rect x="-80" y="-136" width="20" height="32" rx="9" fill="#e64980"/><rect x="60" y="-136" width="20" height="32" rx="9" fill="#e64980"/>`;
+    if(has(5))g+=`<path d="M34 -62 l5 10 11 2 -8 8 2 11 -10 -5 -10 5 2 -11 -8 -8 11 -2z" fill="#0ca678" stroke="#fff" stroke-width="2"/>`;
+    if(has(1))g+=`<g transform="translate(104 -56)"><rect x="-26" y="-3" width="52" height="6" rx="3" fill="#495057"/><rect x="-30" y="-14" width="10" height="28" rx="3" fill="#e8590c"/><rect x="20" y="-14" width="10" height="28" rx="3" fill="#e8590c"/></g>`;
+    if(has(3))g+=`<g transform="translate(-102 -56) rotate(-25)"><rect x="-3" y="-4" width="6" height="34" rx="3" fill="#495057"/><ellipse cx="0" cy="-30" rx="20" ry="26" fill="none" stroke="#f59f00" stroke-width="6"/><path d="M-12 -44 L12 -16 M12 -44 L-12 -16 M-18 -30 L18 -30" stroke="#f59f00" stroke-width="1.5" opacity=".7"/></g>`;
+    if(si===4)g+=`<circle cx="-30" cy="-50" r="13" fill="#fcc419" stroke="#f08c00" stroke-width="3"/><path d="M-36 -64 L-30 -54 L-24 -64" stroke="#1c7ed6" stroke-width="5" fill="none"/><path d="M-30 -178 l12 -24 18 16 18 -16 12 24z" fill="#fcc419" stroke="#f08c00" stroke-width="3"/>`;
+    body=`<g transform="translate(200 330) scale(${sc})">${g}</g>`;
   }
+  $('stage').innerHTML=`<svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${ground}${body}</svg>`}
+
+
+/* ---- render ---- */
+function renderHero(){
+  const t=totalXP(),L=levelOf(t),xp=statXP(),now=simNow();
+  $('lvNum').textContent='Lv.'+L.lv;$('lvStage').textContent=`${stageOf(L.lv)} 올리`;
+  const si=stageIdx(L.lv);$('path').innerHTML=STAGES.map((st,j)=>`<li class="${j<si?'done':j===si?'now':''}"><b>${st[0]}</b><span>Lv.${st[1]}</span></li>`).join('');
+  $('xpFill').style.width=(L.into/L.need*100)+'%';
+  $('xpText').textContent=`다음 레벨까지 ${L.need-L.into} 경험치 · 누적 ${t}`;
+  const sw=streakWeeks(now),wk=state.log.filter(l=>weekKey(new Date(l.d+'T12:00'))===weekKey(now)).length;
+  $('chips').innerHTML=[`이번 주 ${wk}회`,`${sw}주 연속`,`총 ${state.log.length}회 출석`,sw>=2?'연속 보너스 +5':'주 2회면 연속 보너스'].map(x=>`<span class="chip">${esc(x)}</span>`).join('');
+  const mx=Math.max(30,...xp.slice(0,6));
+  $('stats').innerHTML=STATS.slice(0,6).map((s,i)=>{const sl=Math.floor(xp[i]/30)+1;return `<div class="st"><span>${s}</span><span class="bar"><i style="width:${xp[i]/mx*100}%;background:${SC[i]}"></i></span><em>Lv.${sl}</em><small class="${sl>=2?'got':''}">${sl>=2?GEAR[i]+' 획득':GEAR[i]+' · Lv.2에'}</small></div>`}).join('');
+  drawTree()}
+const SPM='https://www.ksponco.or.kr/spm/index.do';
+function applyURL(c){return /^https:\/\/www\.ksponco\.or\.kr\//.test(c[8]||'')&&!/\/spm\/?$/.test(c[8])?c[8]:SPM}
+function applyLink(c){return `<a class="apply" href="${esc(applyURL(c))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(c[2])} 수강신청 페이지 새 창으로 열기">수강신청 ↗</a>`}
+function courseMeta(c){return `${CENTERS[c[0]]} · ${c[5]} · ${won(c[7])}`}
+function checkedToday(k,now){return state.log.some(l=>l.k===k&&l.d===ymd(now))}
+function renderToday(){
+  const now=simNow(),wd=now.getDay(),m=now.getHours()*60+now.getMinutes();
+  $('todayDate').textContent=`${now.getMonth()+1}월 ${now.getDate()}일 ${DAYS[wd]}요일 ${pad(now.getHours())}:${pad(now.getMinutes())} 기준`;
+  const list=state.courses.map(findCourse).filter(Boolean).filter(c=>daySet(c[5]).has(wd)).sort((a,b)=>parseTime(a[4])[0]-parseTime(b[4])[0]);
+  if(!state.courses.length){$('todayList').innerHTML='<div class="empty">아직 담은 강좌가 없어요. 아래 강좌 찾기에서 다니는 강좌를 담아 주세요.</div>';return}
+  if(!list.length){$('todayList').innerHTML='<div class="empty">오늘은 수업이 없는 날이에요. 푹 쉬고 다음 수업에서 만나요.</div>';return}
+  $('todayList').innerHTML=list.map(c=>{const k=keyOf(c),[ws,we]=windowOf(c),done=checkedToday(k,now),open=!done&&m>=ws&&m<=we;
+    const st=done?'오늘 체크 완료':m<ws?`${pad(Math.floor(ws/60))}:${pad(ws%60)}부터 체크`:m>we?'체크 시간이 지났어요':'지금 체크할 수 있어요';
+    return `<div class="row"><div class="t">${esc(c[4].split('-')[0])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(CENTERS[c[0]])} · ${esc(c[4])} · ${esc(STATS[c[1]])} +10</div></div><div><button class="btn go" data-check="${esc(k)}" ${open?'':'disabled'}>${done?'완료':'출석 체크'}</button><div class="state">${esc(st)}</div></div></div>`}).join('')}
+function renderMine(){
+  const list=state.courses.map(findCourse).filter(Boolean);
+  $('myList').innerHTML=list.length?list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm" data-del="${esc(keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join(''):'<div class="empty">담은 강좌가 없어요.</div>'}
+function filtered(){
+  const ce=$('fCenter').value,q=$('fQ').value.trim(),adult=$('fAdult').checked;
+  return COURSES.filter(c=>(ce===''||c[0]==ce)&&(statFilter<0||c[1]===statFilter)&&(!q||c[2].includes(q)||c[3].includes(q))&&(!adult||!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]+c[2])))}
+function renderSearch(){
+  const r=filtered(),mine=new Set(state.courses);
+  $('resCount').textContent=`${r.length.toLocaleString('ko-KR')}개 강좌`;
+  $('resList').innerHTML=r.slice(0,shown).map(c=>{const k=keyOf(c),has=mine.has(k);
+    return `<div class="row ${has?'in':''}"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div>${has?`<button class="btn sm added" data-del="${esc(k)}" aria-label="담은 강좌, 누르면 빼기"><span class="lbl">✓ 담은 강좌</span></button>`:`<button class="btn sm add" data-add="${esc(k)}">+ 담기</button>`}</div>`}).join('')||'<div class="empty">조건에 맞는 강좌가 없어요.</div>';
+  $('moreBtn').style.display=r.length>shown?'inline-block':'none'}
+function renderBadges(){
+  const got=BADGES.map(b=>b[2](state));
+  $('badgeSum').textContent=`${got.filter(Boolean).length} / ${BADGES.length}개 획득`;
+  $('badges').innerHTML=BADGES.map((b,i)=>`<div class="bd ${got[i]?'':'off'}"><svg viewBox="0 0 40 40"><path d="M20 3l14 8v18l-14 8-14-8V11z" fill="${got[i]?SC[i%6]:'#adb5bd'}"/><path d="M14 20l4 4 8-9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${esc(b[0])}</b><span>${esc(b[1])}</span></div>`).join('')}
+function myCenters(){return new Set(state.courses.map(findCourse).filter(Boolean).map(c=>c[0]))}
+function newsFor(n){const cs=myCenters(),now=ymd(simNow());
+  return EVENTS.filter(e=>cs.has(e[0])&&e[5]!=='당첨 발표'&&e[4]<=now).slice(0,n)}
+function newsHTML(list){return list.length?list.map(e=>{const live=e[2]&&e[3]&&e[2]<=ymd(simNow())&&ymd(simNow())<=e[3];
+  return `<div class="row"><span class="tag" style="background:${live?'var(--acc)':'#495057'}">${live?'진행 중':esc(e[5])}</span><div><div class="n">${esc(e[1])}</div><div class="m">${esc(CENTERS[e[0]])} · ${esc(e[2]||e[4])}${e[3]?' ~ '+esc(e[3]):''}</div></div>${e[6]?`<a href="${esc(e[6])}">게시글 보기</a>`:''}</div>`}).join(''):'<div class="empty">담은 강좌의 센터 소식이 없어요.</div>'}
+function recs(n){const xp=statXP(),cs=myCenters(),mine=new Set(state.courses);
+  const weak=[0,1,2,3,4,5].sort((a,b)=>xp[a]-xp[b])[0];
+  const pool=COURSES.filter(c=>c[1]===weak&&(cs.size?cs.has(c[0]):true)&&!mine.has(keyOf(c))&&!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]));
+  return{weak,list:pool.slice(0,n)}}
+function renderSide(){
+  $('rewardList').innerHTML=rewardHTML(rewards());
+  $('newsList').innerHTML=newsHTML(newsFor(4));
+  const r=recs(3);
+  $('recList').innerHTML=`<p class="sub" style="margin:0">지금 가장 낮은 능력치는 <b style="color:${SC[r.weak]}">${STATS[r.weak]}</b>이에요.</p>`+(r.list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm add" data-add="${esc(keyOf(c))}">+ 담기</button></div>`).join('')||'<div class="empty">추천할 강좌가 없어요.</div>')+'<p class="note" style="margin:8px 0 0">수강신청은 한국체육산업개발 온라인 수강신청 페이지에서 해요. 신청 후 + 담기를 누르면 출석 체크를 시작할 수 있어요.</p>'}
+function renderAll(){renderHero();renderToday();renderMine();renderSearch();renderBadges();renderSide()}
+
+/* ---- actions ---- */
+function doCheck(k){
+  const c=findCourse(k),now=simNow();if(!c||checkedToday(k,now))return;
+  const okBefore=new Set(rewards().filter(r=>r.ok).map(r=>r.id)),before=levelOf(totalXP()).lv,bonus=streakWeeks(now)>=2?5:0,xp=10+bonus;
+  state.log.push({k,d:ymd(now),s:c[1],sp:c[2],xp,m:parseTime(c[4])[0]});save();
+  const after=levelOf(totalXP()).lv;renderAll();
+  toast(`${STATS[c[1]]} +${xp}${bonus?' (연속 보너스)':''}`);const st=$('stage');st.classList.remove('hop');void st.offsetWidth;st.classList.add('hop');
+  const fresh=rewards().filter(r=>r.ok&&!okBefore.has(r.id));
+  if(after>before||fresh.length)levelUp(after>before?after:0,fresh)}
+function levelUp(lv,fresh){
+  const r=recs(2),news=newsFor(3),nextR=rewards().filter(x=>!x.ok).sort((a,b)=>b.p-a.p).slice(0,1);
+  $('dlg').innerHTML=`<h2 id="mTitle">${lv?`Lv.${lv} 달성! ${esc(stageOf(lv))} 올리`:'센터 혜택을 달성했어요'}</h2><p class="sub">꾸준히 다닌 덕분이에요. 센터 혜택과 다음 도전을 골라 봤어요.</p>
+   ${fresh.length?`<h3 style="margin:16px 0 8px">새로 달성한 센터 혜택</h3><div class="list">${rewardHTML(fresh)}</div><p class="note">센터 데스크에서 확인 후 받을 수 있어요(기관 협력 시 제공 예정).</p>`:''}
+   ${nextR.length?`<h3 style="margin:16px 0 8px">다음 센터 혜택까지</h3><div class="list">${rewardHTML(nextR)}</div>`:''}
+   <h3 style="margin:16px 0 8px">내 센터 소식</h3><div class="list news">${newsHTML(news)}</div>
+   <h3 style="margin:16px 0 8px">${esc(STATS[r.weak])} 키우기 추천</h3><div class="list">${r.list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr)"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div></div>`).join('')||'<div class="empty">추천할 강좌가 없어요.</div>'}</div>
+   <button class="btn go" id="closeM" style="margin-top:18px;width:100%">계속하기</button>`;
+  $('modal').classList.add('on');$('closeM').focus()}
+function nextSlot(){
+  const base=simNow();
+  for(let add=0;add<8;add++){const d=new Date(base);d.setDate(d.getDate()+add);
+    const cands=state.courses.map(findCourse).filter(Boolean).filter(c=>daySet(c[5]).has(d.getDay())&&!state.log.some(l=>l.k===keyOf(c)&&l.d===ymd(d))).map(c=>parseTime(c[4])[0]).sort((a,b)=>a-b);
+    for(const s of cands){const t=new Date(d);t.setHours(Math.floor(s/60),s%60,0,0);if(t>=base||add===0&&base-t<1800000)return t}}
+  return null}
+function setSim(d){$('simdt').value=`${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;renderAll()}
+function demoState(){
+  const pick=(ce,sp,re)=>COURSES.find(c=>c[0]===ce&&c[2]===sp&&re.test(c[3]));
+  const cs=[pick(3,'헬스',/매일\/성인/),pick(3,'배드민턴',/19시 성인/),pick(2,'수영',/^(19|20)시/)||pick(2,'수영',/./)].filter(Boolean);
+  const s={name:'나',courses:cs.map(keyOf),log:[]},now=simNow();
+  for(let back=24;back>=1;back--){const d=new Date(now);d.setDate(d.getDate()-back);
+    cs.forEach((c,i)=>{if(daySet(c[5]).has(d.getDay())&&(back*7+i*3)%5<2)s.log.push({k:keyOf(c),d:ymd(d),s:c[1],sp:c[2],xp:10,m:parseTime(c[4])[0]})})}
+  return s}
+
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.check)doCheck(t.dataset.check);
+  else if(t.dataset.add){if(!state.courses.includes(t.dataset.add)){state.courses.push(t.dataset.add);save();renderAll();toast('내 강좌에 담았어요')}}
+  else if(t.dataset.del){state.courses=state.courses.filter(k=>k!==t.dataset.del);save();renderAll();toast('내 강좌에서 뺐어요')}
+  else if(t.id==='closeM')$('modal').classList.remove('on')});
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('on')});
+$('nowBtn').onclick=()=>setSim(new Date());
+$('nextBtn').onclick=()=>{const t=nextSlot();if(t)setSim(t);else toast('이번 주에 남은 수업이 없어요')};
+$('simdt').onchange=renderAll;
+$('resetBtn').onclick=()=>{state={name:'나',courses:[],log:[]};save();renderAll();toast('새로 시작했어요')};
+$('demoBtn').onclick=()=>{state=demoState();save();renderAll()};
+$('fCenter').innerHTML='<option value="">전체 센터</option>'+CENTERS.map((c,i)=>`<option value="${i}">${c}</option>`).join('');
+$('fStat').innerHTML=['전체',...STATS.slice(0,6)].map((s,i)=>`<button class="btn" data-stat="${i-1}" aria-pressed="${i===0}" ${i?`style="--c:${SC[i-1]}"`:''}>${s}</button>`).join('');
+$('fStat').addEventListener('click',e=>{const b=e.target.closest('[data-stat]');if(!b)return;statFilter=+b.dataset.stat;
+  for(const x of $('fStat').children){const on=x===b;x.setAttribute('aria-pressed',on);x.style.background=on?(statFilter<0?'var(--ink)':SC[statFilter]):''}shown=40;renderSearch()});
+['fCenter','fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{shown=40;renderSearch()}));
+$('moreBtn').onclick=()=>{shown+=40;renderSearch()};
+
+Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').then(r=>r.json())]).then(([c,ev])=>{
+  COURSES=c;EVENTS=ev;$('totalCount').textContent=c.length.toLocaleString('ko-KR');
+  setSimInit();state=load()||demoState();save();renderAll();
+}).catch(()=>{$('todayList').innerHTML='<div class="empty">강좌 데이터를 불러오지 못했어요. 새로고침해 주세요.</div>'});
+function setSimInit(){const d=new Date();$('simdt').value=`${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
+}
 </script>
 </body>
 </html>
