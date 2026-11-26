@@ -173,15 +173,13 @@ body[data-view=mypage] #page-rewards{background:var(--soft)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* compact character card on home */
 .me{background:var(--field);color:var(--fieldink);padding-top:16px;padding-bottom:16px}
-.mecard{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:16px;align-items:center}
+.mecard{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:center}
 .mini{position:relative;width:96px;aspect-ratio:1/1;background:rgba(255,255,255,.14);border-radius:20px;overflow:hidden}
 .mini svg{position:absolute;inset:0;width:100%;height:100%}
 .mini.hop svg{animation:hop .6s}
 .melv{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .melv b{font-family:Jua,sans-serif;font-weight:400;font-size:32px;line-height:1}
 .mexp{font-size:13px;opacity:.9}
-.meMore{width:6.5em;background:rgba(255,255,255,.18);border-color:transparent;color:#fff}
-.meMore:hover{border-color:#fff}
 .medetail{margin-top:14px;display:grid;gap:12px;background:rgba(255,255,255,.12);border-radius:16px;padding:14px}
 .medetail[hidden]{display:none}
 .medetail .stats{margin-top:0}
@@ -206,7 +204,7 @@ body[data-view=mypage] #page-rewards{background:var(--soft)}
 .wdays li.today span{color:var(--ink);font-weight:700}
 .wdays li.today i{outline:2px solid var(--acc);outline-offset:2px}
 .wlegend{font-size:12px;color:var(--mute);margin-top:8px}
-@media(max-width:600px){.mecard{grid-template-columns:76px minmax(0,1fr) auto;gap:12px}.mini{width:76px}.melv b{font-size:28px}.demobar{padding:6px 12px}}
+@media(max-width:600px){.mecard{grid-template-columns:76px minmax(0,1fr);gap:12px}.mini{width:76px}.melv b{font-size:28px}.demobar{padding:6px 12px}}
 /* search filters */
 .hscroll{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;scrollbar-width:none;padding:2px 0}
 .hscroll::-webkit-scrollbar{display:none}
@@ -368,9 +366,8 @@ body:not([data-view=home]) .homegrid{display:none}
       <div class="xpbar"><i id="mXp" style="width:0"></i></div>
       <div class="mexp" id="mXpText"></div>
     </div>
-    <button class="btn sm meMore" id="meToggle" aria-expanded="false" aria-controls="meDetail">자세히 ▾</button>
   </div>
-    <div class="medetail" id="meDetail" hidden>
+    <div class="medetail" id="meDetail">
       <ol class="path" id="mPath" aria-label="성장 단계"></ol>
       <div class="stats" id="mStats"></div>
     </div>
@@ -796,7 +793,7 @@ const TOUR_KEY='olly-tour-v1';
 const TOUR=[
  {t:()=>$('nextBtn'),h:'① 수업 시간으로 이동',b:'체험용 버튼이에요. <b>다음 수업 시간으로</b>를 누르면 담긴 수업 시간으로 바로 이동해요.'},
  {t:()=>$('todayList').querySelector('.focus .btn.go:not([disabled])')||$('todayList').querySelector('.focus')||$('todayList'),h:'② 출석 체크',b:'수업 시간에는 <b>출석 체크</b> 버튼이 켜져요. 눌러서 경험치를 받아 보세요.'},
- {t:()=>$('sec-me'),h:'③ 캐릭터 성장',b:'출석할수록 올리가 자라고 장비를 얻어요. <b>자세히</b>와 가방 버튼으로 능력치와 장비를 볼 수 있어요.'}];
+ {t:()=>$('sec-me'),h:'③ 캐릭터 성장',b:'출석할수록 올리가 자라고 장비를 얻어요. 아래 능력치와 가방 버튼으로 장비를 볼 수 있어요.'}];
 let tourStep=-1;
 function tourStart(){goView('home');tourStep=0;tourShow()}
 function tourEnd(){tourStep=-1;document.querySelectorAll('.tour-ring,.tour-tip').forEach(n=>n.remove());try{localStorage.setItem(TOUR_KEY,'1')}catch(e){}}
@@ -833,7 +830,6 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
   else if(t.dataset.wear){const[i,j]=t.dataset.wear.split('-').map(Number);toggleWear(i,j);const b=document.querySelector(`#${t.closest('.gearpop').id} [data-wear="${i}-${j}"]`);if(b)b.focus()}
   else if(t.dataset.gtile){const i=+t.dataset.gtile;gearSel=gearSel===i?-1:i;const h=gearHTML(statXP());$('gearPopM').innerHTML=$('gearPopS').innerHTML=h;const b=t.closest('.gearpop').querySelector(`[data-gtile="${i}"]`);if(b)b.focus()}
   else if(t.dataset.view)goView(t.dataset.view);
-  else if(t.id==='meToggle'){const open=t.getAttribute('aria-expanded')!=='true';t.setAttribute('aria-expanded',open);$('meDetail').hidden=!open;t.textContent=open?'접기 ▴':'자세히 ▾'}
   else if(t.id==='closeM')$('modal').classList.remove('on')});
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('modal').classList.remove('on');closeGear();if(tourStep>=0)tourEnd()}});
