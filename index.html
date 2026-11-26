@@ -485,7 +485,7 @@ a.nt:hover{text-decoration:underline}
 <section class="band" id="page-rewards">
   <div class="wrap">
     <div class="news" id="sec-rewards">
-      <h2>센터 혜택</h2>
+      <h2>혜택</h2>
       <p class="sub">꾸준히 다니면 센터가 이미 하고 있는 등록·체험 이벤트와 연결돼요.</p>
       <div class="list" id="rewardList" style="margin-top:14px"></div>
       <p class="note">기관과 협력하면 제공할 혜택이에요. 달성하면 센터 데스크에서 확인 후 받을 수 있어요.</p>
@@ -592,7 +592,7 @@ function rewards(){const now=simNow(),sw=streakWeeks(now),xp=statXP(),n=xp.slice
    {id:'champ',name:'재등록 할인 쿠폰',cond:'챔피언 단계(Lv.12) 달성',p:lv/12,v:`Lv.${Math.min(lv,12)}/12`,basis:'신규 회원 웰컴·재등록 이벤트'},
    {id:'season'+ymd(now).slice(0,7),name:`${mo}월 시즌 챌린지 완주 추첨`,cond:`${mo}월에 12회 출석`,p:mc/12,v:`${Math.min(mc,12)}/12회`,basis:'헬스 미션·100일 챌린지'}
   ].map(r=>({...r,ok:r.p>=1}))}
-function rewardHTML(list){return list.map(r=>`<div class="rw ${r.ok?'ok':''}"><div><div class="n">${esc(r.name)}</div><div class="m">${esc(r.cond)} · 근거: ${esc(r.basis)}</div></div><div class="pv">${r.ok?'달성! 센터에서 확인':esc(r.v)}</div><span class="pb"><i style="width:${Math.min(1,r.p)*100}%"></i></span></div>`).join('')}
+function rewardHTML(list){return list.map(r=>`<div class="rw ${r.ok?'ok':''}"><div><div class="n">${esc(r.name)}</div><div class="m">${esc(r.cond)} · 근거: ${esc(r.basis)}</div></div><div class="pv">${r.ok?'달성! 센터에서 확인하세요':esc(r.v)}</div><span class="pb"><i style="width:${Math.min(1,r.p)*100}%"></i></span></div>`).join('')}
 
 /* ---- character ---- */
 function drawTree(){
