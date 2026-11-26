@@ -456,7 +456,6 @@ a.nt:hover{text-decoration:underline}
 <section class="band" id="page-search">
   <div class="wrap">
     <h2>강좌 찾기</h2>
-    <p class="sub">4개 센터 강좌 <b id="totalCount">0</b>개 · 공공데이터로 매주 갱신</p>
     <div class="filters">
       <div class="hscroll statpick ctabs" id="fCenter" role="group" aria-label="센터"></div>
       <input id="fQ" type="search" placeholder="종목이나 강좌명 (예: 배드민턴)" aria-label="검색어">
@@ -893,7 +892,7 @@ const VIEWS=['home','search','mypage'],startHash=location.hash.slice(1)==='mine'
 goView(VIEWS.includes(startHash)?startHash:'home');
 
 Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').then(r=>r.json())]).then(([c,ev])=>{
-  COURSES=c;EVENTS=ev;$('totalCount').textContent=c.length.toLocaleString('ko-KR');
+  COURSES=c;EVENTS=ev;
   $('fCourses').textContent=c.length.toLocaleString('ko-KR');$('fEvents').textContent=ev.length.toLocaleString('ko-KR');
   const latest=ev.reduce((m,e)=>e[4]>m?e[4]:m,'');if(latest)$('fEventLatest').textContent=`, 최근 글 ${latest}`;
   setSimInit();state=load()||demoState();save();renderAll();
