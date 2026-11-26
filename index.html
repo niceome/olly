@@ -134,7 +134,7 @@ footer ul{margin:6px 0 0;padding-left:18px}
 .apply{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--acc2);text-decoration:none;border:1.5px solid currentColor;border-radius:999px;padding:1px 9px;margin-left:6px;white-space:nowrap;vertical-align:1px}.apply:hover{background:var(--acc2);color:#fff}.apply:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
 .tabbar{display:none}
 @media(max-width:860px){
- .tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -2px 14px rgba(0,0,0,.1);padding:6px 4px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}
+ .tabbar{display:grid;grid-template-columns:repeat(3,1fr);position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -2px 14px rgba(0,0,0,.1);padding:6px 4px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}
  .tabbar button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;background:none;border:0;cursor:pointer;font:700 12px "Noto Sans KR",sans-serif;color:var(--mute);border-radius:12px;min-height:44px;justify-content:center}
  .tabbar button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
  .tabbar button.on{color:var(--field);background:var(--soft)}
@@ -156,9 +156,13 @@ footer ul{margin:6px 0 0;padding-left:18px}
 /* views: same on phone and laptop */
 body[data-view=home] :is(.hero,#sec-courses,#page-search,#page-badges,#page-rewards),
 body[data-view=search] :is(#sec-me,.hero,#sec-today,#sec-courses,#sec-news,#sec-grow,#page-badges,#page-rewards),
-body[data-view=mine] :is(#sec-me,.hero,#sec-today,#sec-news,#sec-grow,#page-search,#page-badges,#page-rewards),
-body[data-view=mypage] :is(#sec-me,#sec-today,#sec-courses,#sec-news,#sec-grow,#page-search){display:none}
-body[data-view=mypage] #page-rewards{background:var(--soft)}
+body[data-view=mypage] :is(#sec-me,.hero,#sec-today,#sec-news,#sec-grow,#page-search){display:none}
+.hero{display:none}
+/* my page: each section as its own bordered card */
+body[data-view=mypage] :is(#sec-courses,#page-badges,#page-rewards){background:var(--bg);padding-block:10px}
+body[data-view=mypage] #sec-courses{padding-top:clamp(18px,3vw,32px)}
+body[data-view=mypage] #page-rewards{padding-bottom:clamp(24px,4vw,44px)}
+body[data-view=mypage] :is(#sec-courses,#page-badges,#page-rewards)>.wrap{background:var(--soft);border:1.5px solid var(--line);border-radius:20px;padding:clamp(18px,3vw,28px);box-shadow:0 2px 10px rgba(0,0,0,.05)}
 /* demo bar */
 .demobar{background:light-dark(#fff4e6,#2b1d0e);color:light-dark(#8a4100,#ffc078);border-bottom:1px solid light-dark(#ffd8a8,#5c3a12);font-size:13px;padding:6px max(5vw,12px)}
 .dwrap{max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between}
@@ -173,16 +177,16 @@ body[data-view=mypage] #page-rewards{background:var(--soft)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* compact character card on home */
 .me{background:var(--field);color:var(--fieldink);padding-top:16px;padding-bottom:16px}
-.mecard{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:center}
-.mini{position:relative;width:96px;aspect-ratio:1/1;background:rgba(255,255,255,.14);border-radius:20px;overflow:hidden}
+.mecard{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"char info";gap:14px 28px;align-items:center}
+.mecard>.charbox{grid-area:char;align-self:center;width:100%;max-width:400px;justify-self:center}
+.meinfo{grid-area:info}
+.meinfo .stats{margin-top:16px}
+.mini{position:relative;width:100%;aspect-ratio:1/1;background:rgba(255,255,255,.14);border-radius:24px;overflow:hidden}
 .mini svg{position:absolute;inset:0;width:100%;height:100%}
 .mini.hop svg{animation:hop .6s}
 .melv{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.melv b{font-family:Jua,sans-serif;font-weight:400;font-size:32px;line-height:1}
+.melv b{font-family:Jua,sans-serif;font-weight:400;font-size:clamp(30px,5vw,48px);line-height:1}
 .mexp{font-size:13px;opacity:.9}
-.medetail{margin-top:14px;display:grid;gap:12px;background:rgba(255,255,255,.12);border-radius:16px;padding:14px}
-.medetail[hidden]{display:none}
-.medetail .stats{margin-top:0}
 /* today: next class card */
 .focus{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px 18px;display:grid;gap:4px}
 .focus.open{border-color:var(--acc);box-shadow:0 6px 22px color-mix(in srgb,var(--acc) 20%,transparent)}
@@ -204,7 +208,7 @@ body[data-view=mypage] #page-rewards{background:var(--soft)}
 .wdays li.today span{color:var(--ink);font-weight:700}
 .wdays li.today i{outline:2px solid var(--acc);outline-offset:2px}
 .wlegend{font-size:12px;color:var(--mute);margin-top:8px}
-@media(max-width:600px){.mecard{grid-template-columns:76px minmax(0,1fr);gap:12px}.mini{width:76px}.melv b{font-size:28px}.demobar{padding:6px 12px}}
+@media(max-width:600px){.mecard{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:10px 14px}.mecard .melv b{font-size:28px}.me{padding-top:12px;padding-bottom:14px}.mecard .st{grid-template-columns:3.6em minmax(0,1fr) 2.6em;gap:6px;font-size:13px}.demobar{padding:6px 12px}}
 /* search filters */
 .hscroll{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;scrollbar-width:none;padding:2px 0}
 .hscroll::-webkit-scrollbar{display:none}
@@ -253,10 +257,7 @@ body[data-view=mypage] #page-rewards{background:var(--soft)}
 .gearbtn{position:absolute;top:8px;left:8px;z-index:3;display:inline-flex;align-items:center;gap:4px;border:0;border-radius:99px;background:rgba(0,0,0,.3);color:#fff;font:700 13px "Noto Sans KR",sans-serif;padding:5px 11px;min-height:32px;cursor:pointer}
 .gearbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
 .gearbtn[aria-expanded=true]{background:#fff;color:var(--field)}
-.minibox .gearbtn{top:4px;left:4px;width:28px;min-height:28px;padding:0;justify-content:center}
-.minibox .gearbtn span{display:none}
 .gearpop{position:absolute;top:48px;left:0;z-index:6;width:min(360px,calc(100vw - 32px));background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.25);padding:14px 16px}
-.minibox .gearpop{top:calc(100% + 8px)}
 .gp-h{display:flex;align-items:baseline;gap:10px;padding-right:30px}
 .gp-h b{font-family:Jua,sans-serif;font-weight:400;font-size:20px}
 .gp-h span{font-size:13px;color:var(--mute)}
@@ -302,8 +303,6 @@ button.gstep{cursor:pointer}
 .stage,.mini{cursor:pointer}
 .bubble{position:absolute;left:50%;top:6px;transform:translate(-50%,-4px);z-index:4;background:#fff;color:#14231a;font:700 13px "Noto Sans KR",sans-serif;padding:6px 12px;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.18);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s}
 .bubble.on{opacity:1;transform:translate(-50%,0)}
-.minibox .bubble{left:calc(100% + 8px);top:50%;transform:translate(0,-50%);font-size:12px}
-.minibox .bubble.on{transform:translate(0,-50%)}
 /* loading skeleton */
 .skel{border-radius:14px;background:linear-gradient(90deg,var(--soft) 25%,color-mix(in srgb,var(--line) 80%,var(--soft)) 50%,var(--soft) 75%);background-size:200% 100%;animation:skel 1.2s linear infinite}
 @keyframes skel{to{background-position:-200% 0}}
@@ -333,6 +332,33 @@ body:not([data-view=home]) .homegrid{display:none}
 .tt-h span{font-size:12px;color:var(--mute)}
 .tour-tip p{margin:6px 0 12px;font-size:14px;line-height:1.5}
 .tt-b{display:flex;justify-content:space-between;align-items:center}
+/* today: long names, all-day, rules hint */
+#todayList .fn,#todayList .row .n{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.focus .ft small{font-family:"Noto Sans KR",sans-serif;font-size:15px;color:var(--mute);margin-left:6px}
+.hint{font-size:13px;color:var(--mute);margin-top:12px}
+.hint summary{cursor:pointer;width:max-content;text-decoration:underline;padding:4px 0}
+/* news: compact */
+.nrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.nrow .tag{margin:2px 0 0}
+.nt,.newsList a.nt{font-weight:500;color:var(--ink);white-space:normal;text-decoration:none;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+a.nt:hover{text-decoration:underline}
+.nb .m{font-size:12px;color:var(--mute)}
+/* search: collapsible filters */
+.fbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:4;background:var(--bg);padding:6px 0}
+.fbtn.on{border-color:var(--field);color:var(--field);font-weight:700}
+.fadult{font-size:14px}
+.fbar .count{margin:0 0 0 auto}
+.fmore{display:grid;gap:10px;background:var(--soft);border-radius:14px;padding:12px}
+.fmore[hidden]{display:none}
+@media(min-width:861px){.fbar{top:56px}}
+/* my classes: compact rows */
+.mrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--sc);border-radius:12px;padding:8px 10px}
+.mn{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mm{font-size:12px;color:var(--mute)}
+/* my page */
+#sec-courses,#sec-badges,#sec-rewards{scroll-margin-top:12px}
+@media(min-width:861px){#sec-courses,#sec-badges,#sec-rewards{scroll-margin-top:70px}}
+.mnext{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;background:rgba(255,255,255,.18);border-radius:99px;padding:2px 10px}
 </style>
 </head>
 <body data-view="home">
@@ -353,7 +379,6 @@ body:not([data-view=home]) .homegrid{display:none}
   <div class="navlinks">
     <button class="nlink" data-view="home">홈</button>
     <button class="nlink" data-view="search">강좌 찾기</button>
-    <button class="nlink" data-view="mine">내 강좌</button>
     <button class="nlink" data-view="mypage">마이페이지</button>
   </div>
 </nav>
@@ -361,16 +386,14 @@ body:not([data-view=home]) .homegrid{display:none}
   <div class="wrap">
   <div class="mecard">
     <div class="charbox minibox"><div class="mini" id="miniStage" aria-hidden="true"></div><button class="gearbtn" data-gear="M" aria-expanded="false" aria-controls="gearPopM" aria-label="장비 도감 열기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l1 12H5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>장비</span></button><div class="gearpop" id="gearPopM" hidden role="dialog" aria-label="장비 도감"></div></div>
-    <div>
+    <div class="meinfo">
       <div class="melv"><b id="mLv">Lv.1</b><span id="mStage">알 올리</span></div>
       <div class="xpbar"><i id="mXp" style="width:0"></i></div>
       <div class="mexp" id="mXpText"></div>
-    </div>
-  </div>
-    <div class="medetail" id="meDetail">
-      <ol class="path" id="mPath" aria-label="성장 단계"></ol>
+      <div class="mnext" id="mNext"></div>
       <div class="stats" id="mStats"></div>
     </div>
+  </div>
   </div>
 </section>
 <header class="band hero">
@@ -395,14 +418,14 @@ body:not([data-view=home]) .homegrid{display:none}
     <h2>오늘 수업</h2><p class="sub" id="todayDate"></p>
     <div class="list" id="todayList" style="margin-top:14px" aria-busy="true"><div class="skel" style="height:150px"></div><div class="skel" style="height:64px"></div></div>
     <div class="week" id="week"></div>
-    <p class="note">출석 체크는 수업 시작 30분 전부터 끝난 뒤 30분까지, 하루 한 번만 열려요. 종일 이용(헬스 등)은 운영 시간 안에서 열려요.</p>
+    <details class="hint"><summary>출석 체크 규칙</summary>수업 시작 30분 전부터 끝난 뒤 30분까지, 하루 한 번 체크할 수 있어요. 헬스처럼 종일 이용하는 강좌는 운영 시간 안에서 체크해요. 이번 주 표에서 점선은 수업 있는 날, 초록 동그라미는 출석한 날이에요.</details>
   </div>
 </section>
 
 <div class="homeside">
 <section class="band" id="sec-news">
   <div class="wrap">
-    <h2>내 센터 소식</h2>
+    <h2>내 센터 소식</h2><p class="sub" style="font-size:13px">최근 1년 이벤트</p>
     <div class="list newsList" style="margin-top:12px"><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div></div>
   </div>
 </section>
@@ -419,10 +442,9 @@ body:not([data-view=home]) .homegrid{display:none}
 
 <section class="band soft" id="sec-courses">
   <div class="wrap">
-    <h2>내 강좌</h2>
-    <p class="sub">등록한 강좌를 담아 두면 수업 시간에 출석 체크할 수 있어요.</p>
-    <div id="mineBody" style="margin-top:14px">
-      <h3 class="h3s">주간 시간표</h3>
+    <div id="mineBody">
+      <h2>내 시간표</h2>
+      <p class="sub" style="margin:6px 0 14px">담은 강좌로 수업 시간에 출석 체크할 수 있어요.</p>
       <div class="tt" id="timetable"></div>
       <h3 class="h3s" id="myCount" style="margin-top:22px">담은 강좌</h3>
       <div class="list" id="myList"></div>
@@ -438,12 +460,14 @@ body:not([data-view=home]) .homegrid{display:none}
     <div class="filters">
       <div class="hscroll statpick ctabs" id="fCenter" role="group" aria-label="센터"></div>
       <input id="fQ" type="search" placeholder="종목이나 강좌명 (예: 배드민턴)" aria-label="검색어">
+      <div class="fbar"><button class="btn sm fbtn" id="fToggle" aria-expanded="false" aria-controls="fMore">필터<span id="fCnt"></span> <span aria-hidden="true">▾</span></button><label class="fadult"><input type="checkbox" id="fAdult" checked style="min-height:auto"> 성인 강좌만</label><span class="count" id="resCount"></span></div>
+      <div class="fmore" id="fMore" hidden>
       <div class="frow"><span class="flabel" id="lStat">능력치</span><div class="hscroll statpick" id="fStat" role="group" aria-labelledby="lStat"></div></div>
       <div class="frow"><span class="flabel" id="lDay">요일</span><div class="hscroll statpick" id="fDay" role="group" aria-labelledby="lDay"></div></div>
       <div class="frow"><span class="flabel" id="lTime">시간</span><div class="hscroll statpick" id="fTime" role="group" aria-labelledby="lTime"></div></div>
-      <div class="fbottom"><label><input type="checkbox" id="fAdult" checked style="min-height:auto"> 성인 강좌만</label><button class="linkbtn" id="fReset">필터 초기화</button></div>
+      <div class="fbottom"><button class="linkbtn" id="fReset">필터 초기화</button></div>
+      </div>
     </div>
-    <div class="count" id="resCount"></div>
     <div class="list res" id="resList"><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div></div>
     <nav class="pager" id="pager" style="margin-top:12px" aria-label="강좌 페이지"></nav>
   </div>
@@ -485,8 +509,7 @@ body:not([data-view=home]) .homegrid{display:none}
 <nav class="tabbar" aria-label="메인 메뉴">
   <button data-view="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>홈</button>
   <button data-view="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>강좌 찾기</button>
-  <button data-view="mine"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>내 강좌</button>
-  <button data-view="mypage"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>마이</button>
+  <button data-view="mypage"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>마이페이지</button>
 </nav>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div class="dlg" id="dlg"></div></div>
@@ -626,8 +649,10 @@ function drawTree(){
     if(si===4)g+=`<circle cx="-30" cy="-50" r="13" fill="#fcc419" stroke="#f08c00" stroke-width="3"/><path d="M-36 -64 L-30 -54 L-24 -64" stroke="#1c7ed6" stroke-width="5" fill="none"/>`;
     body=`<g transform="translate(200 330) scale(${sc})"><g class="ol-idle">${g}</g></g>`;
   }
-  $('stage').innerHTML=`<svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${ground}${body}</svg>`;
-  $('miniStage').innerHTML=`<svg viewBox="30 70 340 290" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${ground}${body}</svg>`}
+  // 단계별 캐릭터 크기에 맞춰 확대해서 그리기 (빈 공간 줄이기)
+  const VL=si===0?236:Math.round(360*sc+16),VT=346-VL;
+  $('stage').innerHTML=`<svg viewBox="${200-VL*.7} ${VT} ${VL*1.4} ${VL}" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${ground}${body}</svg>`;
+  $('miniStage').innerHTML=`<svg viewBox="${200-VL/2} ${VT} ${VL} ${VL}" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${ground}${body}</svg>`}
 
 /* ---- render ---- */
 // 도감 아이콘 (40x40, 색은 currentColor)
@@ -656,11 +681,12 @@ function toggleGear(btn){const pop=$('gearPop'+btn.dataset.gear),open=pop.hidden
 function renderHero(){
   const t=totalXP(),L=levelOf(t),xp=statXP(),now=simNow();
   $('lvNum').textContent='Lv.'+L.lv;$('lvStage').textContent=`${stageOf(L.lv)} 올리`;
-  const si=stageIdx(L.lv);$('path').innerHTML=$('mPath').innerHTML=STAGES.map((st,j)=>`<li class="${j<si?'done':j===si?'now':''}"><b>${st[0]}</b><span>Lv.${st[1]}</span></li>`).join('');
+  const si=stageIdx(L.lv);$('path').innerHTML=STAGES.map((st,j)=>`<li class="${j<si?'done':j===si?'now':''}"><b>${st[0]}</b><span>Lv.${st[1]}</span></li>`).join('');
   $('xpFill').style.width=(L.into/L.need*100)+'%';
   $('xpText').textContent=`다음 레벨까지 ${L.need-L.into} 경험치 · 누적 ${t}`;
   $('mLv').textContent='Lv.'+L.lv;$('mStage').textContent=`${stageOf(L.lv)} 올리`;
   $('mXp').style.width=(L.into/L.need*100)+'%';$('mXpText').textContent=`다음 레벨까지 ${L.need-L.into} 경험치`;
+  {const nx=STAGES[stageIdx(L.lv)+1];$('mNext').textContent=nx?`다음 단계: ${nx[0]} 올리 (Lv.${nx[1]}까지 ${nx[1]-L.lv}레벨)`:'최고 단계 챔피언 올리예요';}
   const sw=streakWeeks(now),wk=state.log.filter(l=>weekKey(new Date(l.d+'T12:00'))===weekKey(now)).length;
   $('chips').innerHTML=[`이번 주 ${wk}회`,...(sw?[`${sw}주 연속`]:[]),`총 ${state.log.length}회 출석`,sw>=2?'연속 보너스 +5':'주 2회 출석하면 연속 보너스'].map(x=>`<span class="chip">${esc(x)}</span>`).join('');
   const mx=Math.max(30,...xp.slice(0,6));
@@ -678,14 +704,14 @@ function renderToday(){
   const list=state.courses.map(findCourse).filter(Boolean).filter(c=>daySet(c[5]).has(wd)).sort((a,b)=>parseTime(a[4])[0]-parseTime(b[4])[0]);
   if(!state.courses.length){$('todayList').innerHTML=onboardHTML();return}
   if(!list.length){$('todayList').innerHTML='<div class="empty">오늘은 수업이 없는 날이에요. 푹 쉬고 다음 수업에서 만나요.</div>';return}
-  const hm=v=>`${pad(Math.floor(v/60))}:${pad(v%60)}`;
+  const hm=v=>`${pad(Math.floor(v/60))}:${pad(v%60)}`,allDay=c=>{const[s,e]=parseTime(c[4]);return e-s>=360};
   const items=list.map(c=>{const k=keyOf(c),[ws,we]=windowOf(c),done=checkedToday(k,now),open=!done&&m>=ws&&m<=we,past=!done&&m>we;
     const st=done?'오늘 출석 체크 완료':m<ws?`${hm(ws)}부터 출석 체크`:past?'출석 체크 시간이 지났어요':'지금 출석 체크할 수 있어요';return{c,k,ws,done,open,past,st}});
   const fi=items.findIndex(x=>!x.done&&!x.past);
-  const row=({c,k,done,open,st})=>`<div class="row ${done?'done':''} ${done&&k===justChecked?'pop':''}"><div class="t">${esc(c[4].split('-')[0])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(CENTERS[c[0]])} · ${esc(c[4])} · ${esc(STATS[c[1]])} +10</div></div><div style="display:grid;justify-items:end;gap:6px">${done?`<span class="donebadge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9"/></svg>출석 완료</span>`:`<button class="btn go" data-check="${esc(k)}" ${open?'':'disabled'}>출석 체크</button><div class="state">${esc(st)}</div>`}</div></div>`;
+  const row=({c,k,done,open,st})=>`<div class="row ${done?'done':''} ${done&&k===justChecked?'pop':''}"><div class="t">${allDay(c)?'종일':esc(c[4].split('-')[0])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(CENTERS[c[0]])} · ${esc(c[4])} · ${esc(STATS[c[1]])} +10</div></div><div style="display:grid;justify-items:end;gap:6px">${done?`<span class="donebadge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9"/></svg>출석 완료</span>`:`<button class="btn go" data-check="${esc(k)}" ${open?'':'disabled'}>출석 체크</button><div class="state">${esc(st)}</div>`}</div></div>`;
   let html='';
   if(fi>=0){const{c,k,ws,open}=items[fi];
-    html+=`<div class="focus ${open?'open':''}"><div class="fk">${open?'지금 출석 체크할 수 있어요':'다음 수업'}</div><div class="ft">${esc(c[4])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="fn">${esc(c[3])}</span></div><div class="m" style="font-size:13px;color:var(--mute)">${esc(CENTERS[c[0]])} · ${esc(STATS[c[1]])} +10</div><button class="btn go big" data-check="${esc(k)}" ${open?'':'disabled'}>${open?'출석 체크':`${hm(ws)}부터 출석 체크할 수 있어요`}</button></div>`;
+    html+=`<div class="focus ${open?'open':''}"><div class="fk">${open?'지금 출석 체크할 수 있어요':'다음 수업'}</div><div class="ft">${allDay(c)?`종일 이용 <small>${esc(c[4].split('-')[1])}까지</small>`:esc(c[4])}</div><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="fn">${esc(c[3])}</span></div><div class="m" style="font-size:13px;color:var(--mute)">${esc(CENTERS[c[0]])} · ${esc(STATS[c[1]])} +10</div><button class="btn go big" data-check="${esc(k)}" ${open?'':'disabled'}>${open?'출석 체크':`${hm(ws)}부터 출석 체크할 수 있어요`}</button></div>`;
     const rest=items.filter((_,i)=>i!==fi);if(rest.length)html+=`<p class="subh">오늘의 다른 수업</p>`+rest.map(row).join('')}
   else html=`<div class="empty">${items.some(x=>x.done)?'오늘 수업을 모두 마쳤어요. 수고했어요!':'오늘 수업의 출석 체크 시간이 지났어요. 다음 수업에서 만나요.'}</div>`+items.map(row).join('');
   $('todayList').innerHTML=html;$('todayList').removeAttribute('aria-busy')}
@@ -695,7 +721,7 @@ function renderWeek(){
   const cells=[...Array(7)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);const k=ymd(d),n=state.log.filter(l=>l.d===k).length,isT=k===ymd(now),cls=sched.has(d.getDay());
     return `<li class="${n?'got':''} ${isT?'today':''} ${cls?'cls':''}" aria-label="${DAYS[d.getDay()]}요일${isT?' 오늘':''} ${n?'출석함':cls?'수업 있는 날':'수업 없음'}"><span>${DAYS[d.getDay()]}</span><i>${n?'✓':''}</i></li>`}).join('');
   const sw=streakWeeks(now),wk=state.log.filter(l=>weekKey(new Date(l.d+'T12:00'))===weekKey(now)).length;
-  $('week').innerHTML=`<div class="whead"><b>이번 주 ${wk}회 출석</b><span>${sw?`${sw}주 연속 · `:''}${sw>=2?'연속 보너스 +5 받는 중':'주 2회 출석하면 연속 보너스 +5'}</span></div><ol class="wdays">${cells}</ol><div class="wlegend">점선은 수업 있는 날, 초록 동그라미는 출석한 날이에요.</div>`}
+  $('week').innerHTML=`<div class="whead"><b>이번 주 ${wk}회 출석</b><span>${sw?`${sw}주 연속 · `:''}${sw>=2?'연속 보너스 +5 받는 중':'주 2회 출석하면 연속 보너스 +5'}</span></div><ol class="wdays">${cells}</ol>`}
 function renderDemo(){const d=simNow(),real=Math.abs(d-new Date())>120000;
   $('demoTime').textContent=`${d.getMonth()+1}월 ${d.getDate()}일 (${DAYS[d.getDay()]}) ${pad(d.getHours())}:${pad(d.getMinutes())}${real?' · 시연 시각':''}`}
 function onboardHTML(){return `<div class="onb"><div class="onb-t">올리 시작하기</div><ol><li><span><b>강좌 찾기</b>에서 다니는 강좌를 담아요</span></li><li><span>수업 시간에 <b>출석 체크</b>를 눌러요</span></li><li><span>출석할 때마다 <b>올리가 자라요</b></span></li></ol><button class="btn go" data-goview="search">강좌 찾으러 가기</button></div>`}
@@ -706,7 +732,7 @@ function renderMine(){
   $('timetable').innerHTML=[1,2,3,4,5,6,0].map(d=>{const items=list.filter(c=>daySet(c[5]).has(d)).sort((a,b)=>parseTime(a[4])[0]-parseTime(b[4])[0]);
     return `<div class="ttd ${items.length?'':'off'} ${d===wd?'today':''}"><b>${DAYS[d]}</b><div class="tti">${items.map(c=>`<div class="ttc" style="--sc:${SC[c[1]]}"><b>${esc(c[4].split('-')[0])}</b>${esc(c[2])}</div>`).join('')||'<em>쉬는 날</em>'}</div></div>`}).join('');
   $('myCount').textContent=`담은 강좌 ${list.length}개`;
-  $('myList').innerHTML=list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm" data-delc="${esc(keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join('')}
+  $('myList').innerHTML=list.map(c=>`<div class="mrow" style="--sc:${SC[c[1]]}"><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><div class="mi"><div class="mn">${esc(c[3])}</div><div class="mm">${esc(CENTERS[c[0]])} · ${esc(c[5])} ${esc(c[4])}</div></div><button class="btn sm" data-delc="${esc(keyOf(c))}" style="color:var(--acc2)">빼기</button></div>`).join('')}
 function filtered(){
   const q=$('fQ').value.trim(),adult=$('fAdult').checked,days=[...FS.fDay].flatMap(i=>DAY_OPTS[i][1]),times=[...FS.fTime].map(i=>TIME_OPTS[i]);
   return COURSES.filter(c=>(!FS.fCenter.size||FS.fCenter.has(c[0]+1))&&(!days.length||days.some(d=>daySet(c[5]).has(d)))&&(!times.length||(([s,e])=>e-s>=360||times.some(([,a,b])=>s>=a&&s<b))(parseTime(c[4])))&&(!FS.fStat.size||FS.fStat.has(c[1]+1))&&(!q||c[2].includes(q)||c[3].includes(q))&&(!adult||!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]+c[2])))}
@@ -719,6 +745,7 @@ function renderSearch(){
   $('resList').innerHTML=r.slice(start,start+PER).map(c=>{const k=keyOf(c),has=mine.has(k);
     const dch=c[5].split(',').map(s=>s.trim()).filter(Boolean).map(s=>`<span class="${s.startsWith('(')?'opt':''}">${esc(s.replace(/[()]/g,''))}</span>`).join('');
     return `<div class="cc ${has?'in':''}" style="--sc:${SC[c[1]]}"><div class="cc-top"><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="cc-stat">${esc(STATS[c[1]])}</span></div><div class="cc-name">${esc(c[3])}</div><div class="cc-when"><b class="cc-time">${esc(c[4])}</b><span class="dch" aria-label="요일 ${esc(c[5])}">${dch}</span></div><div class="cc-meta">${esc([CENTERS[c[0]],c[6],won(c[7])].filter(Boolean).join(' · '))}${applyLink(c)}</div>${has?`<button class="btn sm added" data-del="${esc(k)}" aria-label="담은 강좌, 누르면 빼기"><span class="lbl">✓ 담은 강좌</span></button>`:`<button class="btn sm add" data-add="${esc(k)}">+ 담기</button>`}</div>`}).join('')||'<div class="empty">조건에 맞는 강좌가 없어요.</div>';
+  const nf=FS.fStat.size+FS.fDay.size+FS.fTime.size;$('fCnt').textContent=nf?` ${nf}`:'';$('fToggle').classList.toggle('on',nf>0);
   renderPager(pages)}
 function renderPager(pages){
   if(pages<=1){$('pager').innerHTML='';return}
@@ -730,17 +757,18 @@ function renderBadges(){
   $('badgeSum').textContent=`${got.filter(Boolean).length} / ${BADGES.length}개 획득`;
   $('badges').innerHTML=BADGES.map((b,i)=>`<div class="bd ${got[i]?'':'off'}"><svg viewBox="0 0 40 40"><path d="M20 3l14 8v18l-14 8-14-8V11z" fill="${got[i]?SC[i%6]:'#adb5bd'}"/><path d="M14 20l4 4 8-9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${esc(b[0])}</b><span>${esc(b[1])}</span></div>`).join('')}
 function myCenters(){return new Set(state.courses.map(findCourse).filter(Boolean).map(c=>c[0]))}
-function newsFor(n){const cs=myCenters(),now=ymd(simNow());
-  return EVENTS.filter(e=>cs.has(e[0])&&e[5]!=='당첨 발표'&&e[4]<=now).slice(0,n)}
+function newsFor(n){const cs=myCenters(),d=simNow(),now=ymd(d),from=new Date(d);from.setFullYear(d.getFullYear()-1);const since=ymd(from);
+  return EVENTS.filter(e=>cs.has(e[0])&&e[5]!=='당첨 발표'&&e[4]<=now&&e[4]>=since).slice(0,n)}
 function newsHTML(list){return list.length?list.map(e=>{const live=e[2]&&e[3]&&e[2]<=ymd(simNow())&&ymd(simNow())<=e[3];
-  return `<div class="row"><span class="tag" style="background:${live?'var(--acc)':'#495057'}">${live?'진행 중':esc(e[5])}</span><div><div class="n">${esc(e[1])}</div><div class="m">${esc(CENTERS[e[0]])} · ${esc(e[2]||e[4])}${e[3]?' ~ '+esc(e[3]):''}</div></div>${e[6]?`<a href="${esc(e[6])}">게시글 보기</a>`:''}</div>`}).join(''):`<div class="empty">${state.courses.length?'내 센터의 새 소식이 없어요.':'강좌를 담으면 그 센터의 소식을 보여 드려요.'}</div>`}
+  const title=e[6]?`<a class="nt" href="${esc(e[6])}" target="_blank" rel="noopener noreferrer">${esc(e[1])}</a>`:`<span class="nt">${esc(e[1])}</span>`;
+  return `<div class="nrow"><span class="tag" style="background:${live?'var(--acc)':'#495057'}">${live?'진행 중':esc(e[5])}</span><div class="nb">${title}<div class="m">${esc(CENTERS[e[0]])} · ${esc(e[2]||e[4])}${e[3]?' ~ '+esc(e[3]):''}</div></div></div>`}).join(''):`<div class="empty">${state.courses.length?'최근 1년 동안 내 센터의 소식이 없어요.':'강좌를 담으면 그 센터의 소식을 보여 드려요.'}</div>`}
 function recs(n){const xp=statXP(),cs=myCenters(),mine=new Set(state.courses);
   const weak=[0,1,2,3,4,5].sort((a,b)=>xp[a]-xp[b])[0];
   const pool=COURSES.filter(c=>c[1]===weak&&(cs.size?cs.has(c[0]):true)&&!mine.has(keyOf(c))&&!/어린이|청소년|유아|초등|키즈|주니어|쥬니어/.test(c[6]+c[3]));
   return{weak,list:pool.slice(0,n)}}
 function renderSide(){
   $('rewardList').innerHTML=rewardHTML(rewards());
-  const newsOut=newsHTML(newsFor(3));document.querySelectorAll('.newsList').forEach(el=>el.innerHTML=newsOut);
+  const nl=newsFor(3),newsOut=newsHTML(nl);document.querySelectorAll('.newsList').forEach(el=>el.innerHTML=newsOut);$('sec-news').hidden=!nl.length;
   const r=recs(2);
   const recHTML=`<p class="sub" style="margin:0">지금 가장 낮은 능력치는 <b style="color:${SC[r.weak]}">${STATS[r.weak]}</b>이에요.</p>`+(r.list.map(c=>`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div><span class="tag" style="background:${SC[c[1]]}">${esc(c[2])}</span><span class="n">${esc(c[3])}</span><div class="m">${esc(courseMeta(c))} · ${esc(c[4])}${applyLink(c)}</div></div><button class="btn sm add" data-add="${esc(keyOf(c))}">+ 담기</button></div>`).join('')||'<div class="empty">추천할 강좌가 없어요.</div>')+'<p class="note" style="margin:8px 0 0">수강신청은 한국체육산업개발 온라인 수강신청 페이지에서 해요. 신청 후 + 담기를 누르면 출석 체크를 시작할 수 있어요.</p>';
   document.querySelectorAll('.recList').forEach(el=>el.innerHTML=recHTML)}
@@ -782,7 +810,7 @@ function nextSlot(){
 function setSim(d){$('simdt').value=`${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;renderAll()}
 function demoState(){
   const pick=(ce,sp,re)=>COURSES.find(c=>c[0]===ce&&c[2]===sp&&re.test(c[3]));
-  const cs=[pick(3,'헬스',/매일\/성인/),pick(3,'배드민턴',/19시 성인/),pick(2,'수영',/^(19|20)시/)||pick(2,'수영',/./)].filter(Boolean);
+  const cs=[pick(3,'헬스',/매일\/성인/),pick(3,'배드민턴',/19시 성인/),pick(0,'수영',/^19시 상급/)||pick(2,'수영',/^(19|20)시/)].filter(Boolean);
   const s={name:'나',courses:cs.map(keyOf),log:[]},now=simNow();
   for(let back=24;back>=1;back--){const d=new Date(now);d.setDate(d.getDate()-back);
     cs.forEach((c,i)=>{if(daySet(c[5]).has(d.getDay())&&(back*7+i*3)%5<2)s.log.push({k:keyOf(c),d:ymd(d),s:c[1],sp:c[2],xp:10,m:parseTime(c[4])[0]})})}
@@ -793,7 +821,7 @@ const TOUR_KEY='olly-tour-v1';
 const TOUR=[
  {t:()=>$('nextBtn'),h:'① 수업 시간으로 이동',b:'체험용 버튼이에요. <b>다음 수업 시간으로</b>를 누르면 담긴 수업 시간으로 바로 이동해요.'},
  {t:()=>$('todayList').querySelector('.focus .btn.go:not([disabled])')||$('todayList').querySelector('.focus')||$('todayList'),h:'② 출석 체크',b:'수업 시간에는 <b>출석 체크</b> 버튼이 켜져요. 눌러서 경험치를 받아 보세요.'},
- {t:()=>$('sec-me'),h:'③ 캐릭터 성장',b:'출석할수록 올리가 자라고 장비를 얻어요. 아래 능력치와 가방 버튼으로 장비를 볼 수 있어요.'}];
+ {t:()=>$('sec-me'),h:'③ 캐릭터 성장',b:'출석할수록 올리가 자라고 능력치가 올라요. 캐릭터의 <b>장비</b> 버튼으로 얻은 장비를 보고 바꿔 낄 수 있어요.'}];
 let tourStep=-1;
 function tourStart(){goView('home');tourStep=0;tourShow()}
 function tourEnd(){tourStep=-1;document.querySelectorAll('.tour-ring,.tour-tip').forEach(n=>n.remove());try{localStorage.setItem(TOUR_KEY,'1')}catch(e){}}
@@ -852,6 +880,7 @@ chipGroup('fStat',['전체',...STATS.slice(0,6)],['',...SC.slice(0,6).map(c=>`--
 chipGroup('fDay',DAY_OPTS.map(o=>o[0]));
 chipGroup('fTime',TIME_OPTS.map(o=>o[0]));
 ['fQ','fAdult'].forEach(id=>$(id).addEventListener('input',()=>{page=1;renderSearch()}));
+$('fToggle').onclick=()=>{const o=$('fMore').hidden;$('fMore').hidden=!o;$('fToggle').setAttribute('aria-expanded',o)};
 $('fReset').onclick=()=>{for(const id in FS){FS[id].clear();syncChips(id)}$('fQ').value='';$('fAdult').checked=true;page=1;renderSearch()};
 
 /* ---- views: top nav on laptop, bottom tab bar on phone ---- */
@@ -860,8 +889,8 @@ function goView(v){
   document.querySelectorAll('.nlink[data-view],.tabbar [data-view]').forEach(b=>{const on=b.dataset.view===v;b.classList.toggle('on',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   if(location.hash!=='#'+v)history.replaceState(null,'',v==='home'?location.pathname+location.search:'#'+v);
   window.scrollTo({top:0})}
-const VIEWS=['home','search','mine','mypage'];
-goView(VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'home');
+const VIEWS=['home','search','mypage'],startHash=location.hash.slice(1)==='mine'?'mypage':location.hash.slice(1);
+goView(VIEWS.includes(startHash)?startHash:'home');
 
 Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').then(r=>r.json())]).then(([c,ev])=>{
   COURSES=c;EVENTS=ev;$('totalCount').textContent=c.length.toLocaleString('ko-KR');
@@ -869,7 +898,7 @@ Promise.all([fetch('./courses.json').then(r=>r.json()),fetch('./events.json').th
   const latest=ev.reduce((m,e)=>e[4]>m?e[4]:m,'');if(latest)$('fEventLatest').textContent=`, 최근 글 ${latest}`;
   setSimInit();state=load()||demoState();save();renderAll();
   let seen=false;try{seen=!!localStorage.getItem(TOUR_KEY)}catch(e){}
-  if(!seen)setTimeout(tourStart,700);
+  if(!seen&&!location.hash)setTimeout(tourStart,700);
 }).catch(()=>{$('todayList').innerHTML='<div class="empty">강좌 데이터를 불러오지 못했어요. 새로고침해 주세요.</div>'});
 function setSimInit(){const d=new Date();$('simdt').value=`${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
 }
