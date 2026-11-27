@@ -9,11 +9,15 @@
 - 2026년도 한국체육산업개발(주) 공공데이터 활용 경진대회 출품작
 - 한국체육산업개발(주)의 공식 서비스가 아닙니다.
 
-![홈: 캐릭터 올리와 능력치, 오늘 수업 출석 체크, 내 센터 소식](docs/screen-home.png)
-
-| 강좌 찾기 | 마이페이지 |
-|---|---|
-| ![강좌 찾기: 센터 탭, 검색, 필터, 강좌 목록](docs/screen-search.png) | ![마이페이지: 내 시간표와 담은 강좌, 배지](docs/screen-mypage.png) |
+<table>
+  <tr><th colspan="2">홈</th></tr>
+  <tr><td colspan="2"><img src="docs/screen-home.png" width="100%" alt="홈: 캐릭터 올리와 능력치, 오늘 수업 출석 체크, 내 센터 소식"></td></tr>
+  <tr><th width="50%">강좌 찾기</th><th width="50%">마이페이지</th></tr>
+  <tr>
+    <td width="50%"><img src="docs/screen-search.png" width="100%" alt="강좌 찾기: 센터 탭, 검색, 필터, 강좌 목록"></td>
+    <td width="50%"><img src="docs/screen-mypage.png" width="100%" alt="마이페이지: 내 시간표와 담은 강좌, 배지"></td>
+  </tr>
+</table>
 
 ---
 
