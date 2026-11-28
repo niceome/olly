@@ -95,12 +95,7 @@
 
 ## 기술 구성
 
-```
-공공데이터포털 ──▶ scripts/build_data.py ──▶ courses.json / events.json ──▶ GitHub Pages
- (오픈API·CSV)      (Python, GitHub Actions)                                  │
-                                                                              ▼
-                                                    이용자 브라우저 (index.html) ◀▶ localStorage
-```
+![올리 시스템 구성도: 공공데이터 수집 → 데이터 가공 → 배포 → 이용자 브라우저](docs/system-architecture.png)
 
 | 구분 | 사용 기술 |
 |---|---|
@@ -124,6 +119,7 @@
 │   └── sport_stat.json              종목 → 능력치 분류표
 ├── docs/
 │   ├── data-pipeline.png            데이터 가공 과정 그림
+│   ├── system-architecture.png      시스템 구성도
 │   └── screen-*.png                 README 화면 캡처
 ├── data/
 │   ├── raw/                         내려받은 원본 CSV (오픈API가 없는 센터, API 실패 시 예비)
